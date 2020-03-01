@@ -6,11 +6,12 @@
 class ArgumentList
 {
 public:
-	enum ARGCODE
+	enum class ArgCode
 	{
 		RESOLUTION = 0
 	};
-	const std::vector<std::wstring>* FindArguments(ARGCODE _code)
+
+	const std::vector<std::wstring>* FindArguments(ArgCode _code)
 	{
 		auto it = argMap.find(_code);
 		if (it != argMap.end())
@@ -27,7 +28,7 @@ public:
 
 private:
 
-	std::map<int, std::vector<std::wstring>> argMap;	
+	std::map<ArgCode, std::vector<std::wstring>> argMap;
 
 	ArgumentList()
 	{
@@ -38,11 +39,10 @@ private:
 			std::wstring str = (szArgList[i]);
 			if (str == L"-Res")
 			{
-				argMap.emplace(ARGCODE::RESOLUTION, std::vector<std::wstring>{ szArgList[++i], szArgList[++i] });
+				argMap.emplace(ArgCode::RESOLUTION, std::vector<std::wstring>{ szArgList[++i], szArgList[++i] });
 
 			}
 		}
 			LocalFree(szArgList);
-	}	
-	
+	}		
 };

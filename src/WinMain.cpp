@@ -14,7 +14,7 @@ int CALLBACK WinMain(
 	try
 	{
 		int xRes = INT_MAX, yRes = INT_MAX;
-		const auto resArgs = ArgumentList::Instance().FindArguments(ArgumentList::RESOLUTION);
+		const auto resArgs = ArgumentList::Instance().FindArguments(ArgumentList::ArgCode::RESOLUTION);
 		if (resArgs->size() == 2)
 		{
 			xRes = std::stoi((resArgs)->at(0));

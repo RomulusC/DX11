@@ -1,5 +1,5 @@
 #include "Window.h"
-#include "resource.h"
+#include "../res/ICON_1.h"
 #include <sstream>
 
 Window::WindowClass Window::WindowClass::wndClass;
