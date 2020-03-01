@@ -55,8 +55,8 @@ Window::Window(int _width, int _height, const char* name)
 	}
 	else
 	{
-		appSpec.right = 960;
-		appSpec.bottom = 540;
+		appSpec.right = 1280;
+		appSpec.bottom = 720;
 	}
 	long int winConfig = WS_CAPTION | WS_MINIMIZEBOX | WS_MAXIMIZEBOX | WS_SYSMENU;
 	BOOL result = AdjustWindowRect(&appSpec, winConfig, FALSE);
@@ -64,11 +64,15 @@ Window::Window(int _width, int _height, const char* name)
 	{
 		throw CHWND_LAST_EXCEPT();
 	}
+	int x = appSpec.left + (desktopSpec.right - (appSpec.right - appSpec.left))/2;
+	x = x > appSpec.left ? x : appSpec.left;
+	int y = (desktopSpec.bottom - (appSpec.bottom - appSpec.top))/4;
+	y = y > 0 ? y : 0;
 	hWnd = CreateWindowExA
 	(
 		0, WindowClass::GetName(), name,
 		winConfig,
-		appSpec.left + (desktopSpec.right / 2) - (appSpec.right / 2) /* x axis pos of corner */, (desktopSpec.bottom / 2) - (int)(appSpec.bottom * 0.75f) /* y axis pos of corner*/,
+		x,y,
 		appSpec.right - (appSpec.left*2) /* total pixels left to right */, appSpec.bottom - appSpec.top /* total pixels top to bottom */,
 		nullptr, nullptr,  WindowClass::GetInstance(), this
 	);
