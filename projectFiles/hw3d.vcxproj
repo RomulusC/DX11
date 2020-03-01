@@ -16,6 +16,7 @@
     <ClCompile Include="..\src\WinMain.cpp" />
   </ItemGroup>
   <ItemGroup>
+    <ClInclude Include="..\src\ArgumentList.h" />
     <ClInclude Include="..\src\ExceptionImpl.h" />
     <ClInclude Include="..\src\resource.h" />
     <ClInclude Include="..\src\WinDefines.h" />

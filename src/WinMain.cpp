@@ -1,7 +1,10 @@
 #include "Window.h"
 #include <shellapi.h>
 #include <string>
+
 #include "ExceptionImpl.h"
+#include "ArgumentList.h"
+
 int CALLBACK WinMain(
 	HINSTANCE hInstance,
 	HINSTANCE hPrevInstance,
@@ -10,24 +13,14 @@ int CALLBACK WinMain(
 {
 	try
 	{
-
-		LPWSTR* szArgList;
-		int argC;
-		szArgList = CommandLineToArgvW(GetCommandLineW(), &argC);
 		int xRes = INT_MAX, yRes = INT_MAX;
-		for (int i = 0; i < argC; i++)
-		{					
-			std::wstring str = (szArgList[i]);
-			if (str == L"-Res")
-			{
-				str = szArgList[++i];
-				xRes = std::stoi(str);
-				str = szArgList[++i];
-				yRes = std::stoi(str);
-
-			}
+		const auto resArgs = ArgumentList::Instance().FindArguments(ArgumentList::RESOLUTION);
+		if (resArgs->size() == 2)
+		{
+			xRes = std::stoi((resArgs)->at(0));
+			yRes = std::stoi(resArgs->at(1));
 		}
-		LocalFree(szArgList);
+
 		Window window = Window(xRes, yRes, "DX3D11");
 		// message pump
 		MSG msg;
