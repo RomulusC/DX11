@@ -1,7 +1,7 @@
 #include "Window.h"
 #include <shellapi.h>
 #include <string>
-
+#include <sstream>
 #include "ExceptionImpl.h"
 #include "ArgumentList.h"
 
@@ -14,7 +14,7 @@ int CALLBACK WinMain(
 	try
 	{
 		int xRes = INT_MAX, yRes = INT_MAX;
-		const auto resArgs = ArgumentList::Instance().FindArguments(ArgumentList::ArgCode::RESOLUTION);
+		const auto resArgs = ArgumentList::Instance().FindArguments(ArgumentList::ArgCode::Resolution);
 		if (resArgs->size() == 2)
 		{
 			xRes = std::stoi((resArgs)->at(0));
@@ -25,10 +25,19 @@ int CALLBACK WinMain(
 		// message pump
 		MSG msg;
 		BOOL gResult;
+		window.m_keyboard.EnableAutoRepeat();
 		while ((gResult = GetMessage(&msg, nullptr, 0, 0)) > 0)
 		{
 			TranslateMessage(&msg);
 			DispatchMessage(&msg);
+			if (window.m_keyboard.KeyIsPressed(VK_MENU))
+			{
+				std::ostringstream ss;
+				ss << "Button " << VK_MENU << " pressed!" << std::endl;
+				OutputDebugString(ss.str().c_str());
+				MessageBox(nullptr, ss.str().c_str(), nullptr, MB_OK | MB_ICONEXCLAMATION);
+			}
+			
 		}		
 		if (gResult == -1)
 		{

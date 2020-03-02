@@ -2,11 +2,11 @@
 #include "../res/ICON_1.h"
 #include <sstream>
 
-Window::WindowClass Window::WindowClass::wndClass;
+Window::WindowClass Window::WindowClass::s_wndClass;
 
 Window::WindowClass::WindowClass() noexcept
 	: 
-	hInst(GetModuleHandle(nullptr))
+	m_hInst(GetModuleHandle(nullptr))
 {
 	WNDCLASSEX wc = { 0 };
 	wc.cbSize = sizeof(wc);
@@ -14,44 +14,44 @@ Window::WindowClass::WindowClass() noexcept
 	wc.lpfnWndProc = HandleMsgSetup;
 	wc.cbClsExtra = 0;
 	wc.cbWndExtra = 0;
-	wc.hInstance = hInst;
-	wc.hIcon = static_cast<HICON>(LoadImage(hInst, MAKEINTRESOURCE(IDI_ICON1),IMAGE_ICON, 0, 0, 0));
+	wc.hInstance = m_hInst;
+	wc.hIcon = static_cast<HICON>(LoadImage(m_hInst, MAKEINTRESOURCE(IDI_ICON1),IMAGE_ICON, 0, 0, 0));
 	wc.hCursor = nullptr;
 	wc.hbrBackground = nullptr;
 	wc.lpszMenuName = nullptr;
-	wc.lpszClassName = WindowClass::wndClassName;
-	wc.hIcon = wc.hIcon = static_cast<HICON>(LoadImage(hInst, MAKEINTRESOURCE(IDI_ICON1), IMAGE_ICON, 0, 0, 0));
+	wc.lpszClassName = WindowClass::s_wndClassName;
+	wc.hIcon = wc.hIcon = static_cast<HICON>(LoadImage(m_hInst, MAKEINTRESOURCE(IDI_ICON1), IMAGE_ICON, 0, 0, 0));
 
 	RegisterClassEx(&wc);
 }
 
 Window::WindowClass::~WindowClass()
 {
-	UnregisterClass(wndClassName, GetInstance());
+	UnregisterClass(s_wndClassName, GetInstance());
 }
 
 const char* Window::WindowClass::GetName() noexcept
 {
-	return wndClassName;
+	return s_wndClassName;
 }
 
 HINSTANCE Window::WindowClass::GetInstance() noexcept
 {
-	return wndClass.hInst;
+	return s_wndClass.m_hInst;
 }
 
 Window::Window(int _width, int _height, const char* name)
-	: width(_width)
-	, height(_height)	
+	: m_width(_width)
+	, m_height(_height)	
 {
 	RECT desktopSpec = { 0 };
 	GetWindowRect(GetDesktopWindow(), &desktopSpec);
 	RECT appSpec = { 0 };
 	
-	if (desktopSpec.right >= width && desktopSpec.bottom >= height)
+	if (desktopSpec.right >= _width && desktopSpec.bottom >= _height && _width >= 600 && _height >= 400)
 	{
-		appSpec.right = width;
-		appSpec.bottom = height;
+		appSpec.right = _width;
+		appSpec.bottom = _height;
 	}
 	else
 	{
@@ -68,7 +68,7 @@ Window::Window(int _width, int _height, const char* name)
 	x = x > appSpec.left ? x : appSpec.left;
 	int y = (desktopSpec.bottom - (appSpec.bottom - appSpec.top))/4;
 	y = y > 0 ? y : 0;
-	hWnd = CreateWindowExA
+	m_hWnd = CreateWindowExA
 	(
 		0, WindowClass::GetName(), name,
 		winConfig,
@@ -76,17 +76,18 @@ Window::Window(int _width, int _height, const char* name)
 		appSpec.right - (appSpec.left*2) /* total pixels left to right */, appSpec.bottom - appSpec.top /* total pixels top to bottom */,
 		nullptr, nullptr,  WindowClass::GetInstance(), this
 	);
-	if (hWnd == nullptr)
+
+	if (m_hWnd == nullptr)
 	{
 		throw CHWND_LAST_EXCEPT();
-	}
-	ShowWindow(hWnd, SW_SHOW);
+	}	
 
+	ShowWindow(m_hWnd, SW_SHOW);
 }
 
 Window::~Window()
 {
-	DestroyWindow(hWnd);
+	DestroyWindow(m_hWnd);
 }
 
 LRESULT WINAPI Window::HandleMsgSetup(HWND hWnd, UINT msg, WPARAM wParam, LPARAM lParam)
@@ -110,20 +111,78 @@ LRESULT WINAPI Window::HandleMsgThunk(HWND hWnd, UINT msg, WPARAM wParam, LPARAM
 	return pWnd->HandleMsg(hWnd, msg, wParam, lParam);
 }
 
-LRESULT WINAPI Window::HandleMsg(HWND hWnd, UINT msg, WPARAM wParam, LPARAM lParam)
+LRESULT WINAPI Window::HandleMsg(HWND hWnd, UINT uMsg, WPARAM wParam, LPARAM lParam)
 {
-	switch (msg)
+	// use thread pool for long message handling callbacks.
+	wchar_t msg[32];
+	switch (uMsg)
 	{
-	case WM_CLOSE:
+
+	case WM_DESTROY:
+	{
 		PostQuitMessage(0);
+		return 0;
+	}
+	case WM_PAINT:
+	{
+		PAINTSTRUCT ps;
+		HDC hdc = BeginPaint(hWnd, &ps);
+		FillRect(hdc, &ps.rcPaint, (HBRUSH)(COLOR_WINDOW + 1));
+		EndPaint(hWnd, &ps);
+		return 0;
+	}
+	case WM_SIZE:
+	{
+		OnResize(hWnd, LOWORD(lParam), HIWORD(lParam));
+		return 0;
+	}
+	case WM_KILLFOCUS:
+	{
+		m_keyboard.ClearState();
+		return 0;
+	}
+	/* KEY STROKES */	
+	case WM_SYSCHAR:
+	{
+		swprintf_s(msg, L"WM_SYSCHAR: %c\n", (wchar_t)wParam);
+		OutputDebugStringW(msg);
+		break;
+	}	
+	case WM_KEYDOWN:
+	case WM_SYSKEYDOWN:
+	{
+		if (lParam & 0x40000000 || m_keyboard.IsAutoRepeatEnabled()) // 30th bit represents if key pressed before
+		{
+			m_keyboard.OnKeyPressed(static_cast<unsigned char>(wParam));
+		}
 		break;
 	}
-	return DefWindowProc(hWnd, msg, wParam, lParam);
+	case WM_KEYUP:
+	case WM_SYSKEYUP:
+	{
+		m_keyboard.OnKeyRelease(static_cast<unsigned char>(wParam));
+		break;
+	}
+	case WM_CHAR:
+	{
+		m_keyboard.OnChar(static_cast<unsigned char>(wParam));
+		break;
+	}
+	}
+	return DefWindowProc(hWnd, uMsg, wParam, lParam);
+}
+void Window::OnResize(HWND hWnd, int x, int y)
+{	
+	/*
+	std::stringstream ss;
+	ss << "OnResize() x:" << x<< " y:" << y << std::endl;
+	MessageBox(nullptr, ss.str().c_str(), "Who cares", MB_OK | MB_ICONEXCLAMATION);	
+	*/
 }
 
 Window::Exception::Exception(int _line, const char* _file, HRESULT _hr) noexcept
 	:ExceptionImpl(_line, _file)
-	,hr(_hr)
+	,m_hr(_hr)
 {}
 
 const char* Window::Exception::what() const noexcept
@@ -162,10 +221,10 @@ std::string Window::Exception::TranslateErrorCode(HRESULT _hr) noexcept
 
 HRESULT Window::Exception::GetErrorCode() const noexcept
 {
-	return hr;
+	return m_hr;
 }
 
 std::string Window::Exception::GetErrorString() const noexcept
 {
-	return TranslateErrorCode(hr);
+	return TranslateErrorCode(m_hr);
 }

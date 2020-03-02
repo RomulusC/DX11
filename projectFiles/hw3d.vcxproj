@@ -12,6 +12,7 @@
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="..\src\ExceptionImpl.cpp" />
+    <ClCompile Include="..\src\Keyboard.cpp" />
     <ClCompile Include="..\src\Window.cpp" />
     <ClCompile Include="..\src\WinMain.cpp" />
   </ItemGroup>
@@ -19,6 +20,7 @@
     <ClInclude Include="..\res\ICON_1.h" />
     <ClInclude Include="..\src\ArgumentList.h" />
     <ClInclude Include="..\src\ExceptionImpl.h" />
+    <ClInclude Include="..\src\Keyboard.h" />
     <ClInclude Include="..\src\WinDefines.h" />
     <ClInclude Include="..\src\Window.h" />
   </ItemGroup>
@@ -107,7 +109,7 @@
       <OptimizeReferences>true</OptimizeReferences>
       <AdditionalLibraryDirectories>$(SolutionDir)../src;%(AdditionalLibraryDirectories)</AdditionalLibraryDirectories>
       <AdditionalDependencies>user32.lib;Shell32.lib;</AdditionalDependencies>
-    </Link>   
+    </Link>
   </ItemDefinitionGroup>
   <ItemDefinitionGroup>
     <ResourceCompile>
