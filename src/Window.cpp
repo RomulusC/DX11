@@ -1,4 +1,5 @@
 #include "Window.h"
+#include <Windowsx.h>
 #include "../res/ICON_1.h"
 #include <sstream>
 
@@ -48,10 +49,10 @@ Window::Window(int _width, int _height, const char* name)
 	GetWindowRect(GetDesktopWindow(), &desktopSpec);
 	RECT appSpec = { 0 };
 	
-	if (desktopSpec.right >= _width && desktopSpec.bottom >= _height && _width >= 600 && _height >= 400)
+	if (desktopSpec.right >= _width && desktopSpec.bottom >= m_height && m_width >= 600 && m_height >= 400)
 	{
-		appSpec.right = _width;
-		appSpec.bottom = _height;
+		appSpec.right = m_width;
+		appSpec.bottom = m_height;
 	}
 	else
 	{
@@ -60,7 +61,7 @@ Window::Window(int _width, int _height, const char* name)
 	}
 	long int winConfig = WS_CAPTION | WS_MINIMIZEBOX | WS_MAXIMIZEBOX | WS_SYSMENU;
 	BOOL result = AdjustWindowRect(&appSpec, winConfig, FALSE);
-	if (result < 0)
+	if (result == 0)
 	{
 		throw CHWND_LAST_EXCEPT();
 	}
@@ -143,14 +144,12 @@ LRESULT WINAPI Window::HandleMsg(HWND hWnd, UINT uMsg, WPARAM wParam, LPARAM lPa
 	}
 	/* KEY STROKES */	
 	case WM_SYSCHAR:
-	{
-		swprintf_s(msg, L"WM_SYSCHAR: %c\n", (wchar_t)wParam);
-		OutputDebugStringW(msg);
+	{		
 		break;
 	}	
 	case WM_KEYDOWN:
 	case WM_SYSKEYDOWN:
-	{
+	{		
 		if (lParam & 0x40000000 || m_keyboard.IsAutoRepeatEnabled()) // 30th bit represents if key pressed before
 		{
 			m_keyboard.OnKeyPressed(static_cast<unsigned char>(wParam));
@@ -168,6 +167,65 @@ LRESULT WINAPI Window::HandleMsg(HWND hWnd, UINT uMsg, WPARAM wParam, LPARAM lPa
 		m_keyboard.OnChar(static_cast<unsigned char>(wParam));
 		break;
 	}
+	case WM_MOUSEMOVE:
+	{
+		POINTS pts = MAKEPOINTS(lParam);
+		if (pts.x >= 0 && pts.x < m_width && pts.y >= 0 && pts.y < m_height)
+		{
+			if (!m_mouse.IsMouseInWindow())
+			{
+				SetCapture(hWnd);
+				m_mouse.OnMouseEnterWindow();
+			}
+			m_mouse.OnMouseMove(pts.x, pts.y);
+		}
+		else
+		{
+			if (wParam & (MK_LBUTTON | MK_RBUTTON | MK_MBUTTON))
+			{
+				m_mouse.OnMouseMove(pts.x, pts.y);
+			}
+			else
+			{
+				m_mouse.OnMouseLeaveWindow();
+				ReleaseCapture();
+			}
+		}
+		break;
+	}
+	case WM_LBUTTONDOWN:
+	{
+		m_mouse.OnLeftPressed(GET_X_LPARAM(lParam), GET_Y_LPARAM(lParam));
+		break;
+	}
+	case WM_LBUTTONUP:
+	{
+		m_mouse.OnLeftReleased(GET_X_LPARAM(lParam), GET_Y_LPARAM(lParam));
+		break;
+	}
+	case WM_RBUTTONDOWN:
+	{
+		m_mouse.OnRightPressed(GET_X_LPARAM(lParam), GET_Y_LPARAM(lParam));
+		break;
+	}
+	case WM_RBUTTONUP:
+	{
+		m_mouse.OnRightReleased(GET_X_LPARAM(lParam), GET_Y_LPARAM(lParam));
+		break;
+	}
+	case WM_MBUTTONDOWN:
+	{
+		m_mouse.OnMMPressed(GET_X_LPARAM(lParam), GET_Y_LPARAM(lParam));
+		break;
+	}
+	case WM_MBUTTONUP:
+	{
+		m_mouse.OnMMReleased(GET_X_LPARAM(lParam), GET_Y_LPARAM(lParam));
+		break;
+	}
+	case WM_MOUSEWHEEL:
+		m_mouse.OnWheelUpdate(GET_X_LPARAM(lParam), GET_Y_LPARAM(lParam), GET_WHEEL_DELTA_WPARAM(wParam));
+		break;	
 	}
 	return DefWindowProc(hWnd, uMsg, wParam, lParam);
 }
@@ -178,6 +236,14 @@ void Window::OnResize(HWND hWnd, int x, int y)
 	ss << "OnResize() x:" << x<< " y:" << y << std::endl;
 	MessageBox(nullptr, ss.str().c_str(), "Who cares", MB_OK | MB_ICONEXCLAMATION);	
 	*/
+}
+
+void Window::ChangeTitle(const char* _str)
+{
+	if (SetWindowText(m_hWnd, _str) == 0)
+	{
+		throw CHWND_LAST_EXCEPT();
+	}
 }
 
 Window::Exception::Exception(int _line, const char* _file, HRESULT _hr) noexcept

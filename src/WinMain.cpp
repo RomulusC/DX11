@@ -30,14 +30,37 @@ int CALLBACK WinMain(
 		{
 			TranslateMessage(&msg);
 			DispatchMessage(&msg);
-			if (window.m_keyboard.KeyIsPressed(VK_MENU))
+			auto key = window.m_keyboard.ReadKey();
+			if (key.has_value())
 			{
 				std::ostringstream ss;
-				ss << "Button " << VK_MENU << " pressed!" << std::endl;
 				OutputDebugString(ss.str().c_str());
-				MessageBox(nullptr, ss.str().c_str(), nullptr, MB_OK | MB_ICONEXCLAMATION);
 			}
-			
+			auto key1 = window.m_mouse.Read();
+			if (key1.has_value())
+			{
+				std::ostringstream ss;
+				switch (key1->GetType())
+				{
+				case Mouse::Event::Type::Move:
+				{
+					std::ostringstream sd;
+					sd << "DX3D11 (" << key1->GetPosX() << "," << key1->GetPosY() << ")";
+					window.ChangeTitle(sd.str().c_str());
+					break;
+				}
+				case Mouse::Event::Type::ScrollUp:
+					ss << "+" << "" << std::endl;
+					break;
+				case Mouse::Event::Type::ScrollDown:
+					ss << "-"<<"" << std::endl;
+					break;
+				default:
+					ss <<"Left:"<< key1->IsLeftPressed() <<"Right:"<< key1->IsRightPressed()<< "Middle:"<<key1->IsMMClickPressed() << std::endl;
+					break;
+				}				
+				OutputDebugString(ss.str().c_str());
+			}			
 		}		
 		if (gResult == -1)
 		{

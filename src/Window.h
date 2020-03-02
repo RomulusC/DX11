@@ -2,6 +2,7 @@
 #include "WinDefines.h"
 #include "ExceptionImpl.h"
 #include "Keyboard.h"
+#include "Mouse.h"
 
 #define CHWND_EXCEPT(hr) Window::Exception(__LINE__, __FILE__, hr)
 #define CHWND_LAST_EXCEPT() Window::Exception(__LINE__, __FILE__, GetLastError())
@@ -48,7 +49,10 @@ private:
 	LRESULT CALLBACK HandleMsg(HWND hWnd, UINT msg, WPARAM wParam, LPARAM lParam);
 	void OnResize(HWND hWnd, int x, int y);
 public:
+	void ChangeTitle(const char* _str);
+public:
 	Keyboard m_keyboard;
+	Mouse m_mouse;
 private:
 	int m_width;
 	int m_height;
