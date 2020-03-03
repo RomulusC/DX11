@@ -11,6 +11,7 @@
     </ProjectConfiguration>
   </ItemGroup>
   <ItemGroup>
+    <ClCompile Include="..\src\Application.cpp" />
     <ClCompile Include="..\src\ExceptionImpl.cpp" />
     <ClCompile Include="..\src\Keyboard.cpp" />
     <ClCompile Include="..\src\Mouse.cpp" />
@@ -19,6 +20,7 @@
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="..\res\ICON_1.h" />
+    <ClInclude Include="..\src\Application.h" />
     <ClInclude Include="..\src\ArgumentList.h" />
     <ClInclude Include="..\src\ExceptionImpl.h" />
     <ClInclude Include="..\src\Keyboard.h" />

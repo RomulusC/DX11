@@ -3,6 +3,7 @@
 #include "ExceptionImpl.h"
 #include "Keyboard.h"
 #include "Mouse.h"
+#include <optional>
 
 #define CHWND_EXCEPT(hr) Window::Exception(__LINE__, __FILE__, hr)
 #define CHWND_LAST_EXCEPT() Window::Exception(__LINE__, __FILE__, GetLastError())
@@ -50,6 +51,7 @@ private:
 	void OnResize(HWND hWnd, int x, int y);
 public:
 	void ChangeTitle(const char* _str);
+	static std::optional<int> ProcessMessage();
 public:
 	Keyboard m_keyboard;
 	Mouse m_mouse;

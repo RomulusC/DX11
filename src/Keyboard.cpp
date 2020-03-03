@@ -76,8 +76,18 @@ bool Keyboard::IsAutoRepeatEnabled() const noexcept
 
 void Keyboard::OnKeyPressed(unsigned char _keycode) noexcept
 {
+	if (m_autoRepeatEnabled == true)
+	{
+		if (m_keyStates[_keycode] == false)
+		{
+			m_keyBuffer.push(Keyboard::Event(Keyboard::Event::Type::Press, _keycode));
+		}		
+	}
+	else
+	{
+		m_keyBuffer.push(Keyboard::Event(Keyboard::Event::Type::Press, _keycode));
+	}
 	m_keyStates[_keycode] = true;
-	m_keyBuffer.push(Keyboard::Event(Keyboard::Event::Type::Press, _keycode));
 	TrimBuffer(m_keyBuffer);
 }
 

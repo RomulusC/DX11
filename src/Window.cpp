@@ -83,7 +83,7 @@ Window::Window(int _width, int _height, const char* name)
 		throw CHWND_LAST_EXCEPT();
 	}	
 
-	ShowWindow(m_hWnd, SW_SHOW);
+	ShowWindow(m_hWnd, SW_SHOW | SW_SHOWNORMAL);
 }
 
 Window::~Window()
@@ -115,7 +115,6 @@ LRESULT WINAPI Window::HandleMsgThunk(HWND hWnd, UINT msg, WPARAM wParam, LPARAM
 LRESULT WINAPI Window::HandleMsg(HWND hWnd, UINT uMsg, WPARAM wParam, LPARAM lParam)
 {
 	// use thread pool for long message handling callbacks.
-	wchar_t msg[32];
 	switch (uMsg)
 	{
 
@@ -244,6 +243,25 @@ void Window::ChangeTitle(const char* _str)
 	{
 		throw CHWND_LAST_EXCEPT();
 	}
+}
+
+std::optional<int> Window::ProcessMessage()
+{
+	// message pump
+	MSG msg;
+
+	while (PeekMessage(&msg, nullptr, 0, 0, PM_REMOVE))
+	{
+		if (msg.message == WM_QUIT)
+		{
+			return static_cast<int>(msg.wParam);
+		}
+
+		TranslateMessage(&msg);
+		DispatchMessage(&msg);
+	}
+
+	return std::optional<int>();
 }
 
 Window::Exception::Exception(int _line, const char* _file, HRESULT _hr) noexcept
