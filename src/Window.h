@@ -1,9 +1,12 @@
 #pragma once
+
 #include "WinDefines.h"
 #include "ExceptionImpl.h"
 #include "Keyboard.h"
 #include "Mouse.h"
+#include <memory>
 #include <optional>
+#include "Graphics.h"
 
 #define CHWND_EXCEPT(hr) Window::Exception(__LINE__, __FILE__, hr)
 #define CHWND_LAST_EXCEPT() Window::Exception(__LINE__, __FILE__, GetLastError())
@@ -52,6 +55,7 @@ private:
 public:
 	void ChangeTitle(const char* _str);
 	static std::optional<int> ProcessMessage();
+	Graphics& GetGfx();
 public:
 	Keyboard m_keyboard;
 	Mouse m_mouse;
@@ -59,4 +63,6 @@ private:
 	int m_width;
 	int m_height;
 	HWND m_hWnd;
+	std::unique_ptr<Graphics> m_pGfx;
+	
 };

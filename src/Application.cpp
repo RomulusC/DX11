@@ -55,4 +55,7 @@ void Application::DoFrame()
 		}
 		OutputDebugString(ss.str().c_str());
 	}
+	
+	m_window.GetGfx().ClearBuffer(.5f, .5f, 1.0f);
+	m_window.GetGfx().EndFrame();
 }
