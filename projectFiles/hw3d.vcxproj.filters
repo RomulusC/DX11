@@ -44,9 +44,6 @@
     <ClInclude Include="..\src\Window.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="..\src\ExceptionImpl.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
     <ClInclude Include="..\src\ArgumentList.h">
       <Filter>Header Files</Filter>
     </ClInclude>
@@ -63,6 +60,12 @@
       <Filter>Header Files</Filter>
     </ClInclude>
     <ClInclude Include="..\src\Graphics.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="..\src\ExceptionBaseImpl.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="..\src\Core.h">
       <Filter>Header Files</Filter>
     </ClInclude>
   </ItemGroup>

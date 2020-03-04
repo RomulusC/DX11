@@ -63,7 +63,7 @@ Window::Window(int _width, int _height, const char* name)
 	BOOL result = AdjustWindowRect(&appSpec, winConfig, FALSE);
 	if (result == 0)
 	{
-		throw CHWND_LAST_EXCEPT();
+		CHWND_THROW_LAST_EXCEPT();
 	}
 	int x = appSpec.left + (desktopSpec.right - (appSpec.right - appSpec.left))/2;
 	x = x > appSpec.left ? x : appSpec.left;
@@ -80,11 +80,11 @@ Window::Window(int _width, int _height, const char* name)
 
 	if (m_hWnd == nullptr)
 	{
-		throw CHWND_LAST_EXCEPT();
+		CHWND_THROW_LAST_EXCEPT();
 	}	
 
+	ShowWindow(m_hWnd, SW_SHOW);
 	m_pGfx = std::make_unique<Graphics>(m_hWnd);
-	ShowWindow(m_hWnd, SW_SHOW | SW_SHOWNORMAL);
 }
 
 Window::~Window()
@@ -242,7 +242,7 @@ void Window::ChangeTitle(const char* _str)
 {
 	if (SetWindowText(m_hWnd, _str) == 0)
 	{
-		throw CHWND_LAST_EXCEPT();
+		CHWND_THROW_LAST_EXCEPT();
 	}
 }
 
@@ -267,11 +267,15 @@ std::optional<int> Window::ProcessMessage()
 
 Graphics& Window::GetGfx()
 {
+	if (!m_pGfx)
+	{
+		CHWND_NOGFX_EXCEPTION();
+	}
 	return *m_pGfx;
 }
 
 Window::Exception::Exception(int _line, const char* _file, HRESULT _hr) noexcept
-	:ExceptionImpl(_line, _file)
+	:ExceptionBaseImpl(_line, _file)
 	,m_hr(_hr)
 {}
 
@@ -317,4 +321,13 @@ HRESULT Window::Exception::GetErrorCode() const noexcept
 std::string Window::Exception::GetErrorString() const noexcept
 {
 	return TranslateErrorCode(m_hr);
+}
+
+Window::NoGfxException::NoGfxException(int _line, const char* _file) noexcept
+	: ExceptionBaseImpl(_line, _file)
+{}
+
+const char* Window::NoGfxException::GetType() const noexcept
+{
+	return "No Gfx Exception";
 }

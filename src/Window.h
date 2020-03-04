@@ -1,20 +1,22 @@
 #pragma once
 
 #include "WinDefines.h"
-#include "ExceptionImpl.h"
+#include "Core.h"
+#include "ExceptionBaseImpl.h"
 #include "Keyboard.h"
 #include "Mouse.h"
 #include <memory>
 #include <optional>
 #include "Graphics.h"
 
-#define CHWND_EXCEPT(hr) Window::Exception(__LINE__, __FILE__, hr)
-#define CHWND_LAST_EXCEPT() Window::Exception(__LINE__, __FILE__, GetLastError())
 
+#define CHWND_EXCEPT(hr) Window::Exception ex = Window::Exception(__LINE__, __FILE__, hr); DEBUG_BREAK(); OutputDebugString(ex.what()); throw ex
+#define CHWND_THROW_LAST_EXCEPT() Window::Exception ex = Window::Exception(__LINE__, __FILE__, GetLastError()); OutputDebugString(ex.what()); DEBUG_BREAK(); throw ex
+#define CHWND_NOGFX_EXCEPTION() Window::NoGfxException ex = Window::NoGfxException(__LINE__, __FILE__); DEBUG_BREAK(); OutputDebugString(ex.what()); throw ex
 class Window
 {
 public:
-	class Exception : public ExceptionImpl
+	class Exception : public ExceptionBaseImpl
 	{
 	public:
 		Exception(int _line, const char* _file, HRESULT _hr) noexcept;
@@ -25,6 +27,12 @@ public:
 		std::string GetErrorString() const noexcept;
 	private:
 		HRESULT m_hr;
+	};
+	class NoGfxException : public ExceptionBaseImpl
+	{
+	public:
+		NoGfxException(int _line, const char* _file) noexcept;
+		virtual const char* GetType() const noexcept override;
 	};
 private:
 	class WindowClass

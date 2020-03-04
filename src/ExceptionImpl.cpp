@@ -1,11 +1,13 @@
-#include "ExceptionImpl.h"
+#include "Window.h"
+#include <debugapi.h>
+#include "ExceptionBaseImpl.h"
 #include <sstream>
-ExceptionImpl::ExceptionImpl(int _line, const char* _file) noexcept
+ExceptionBaseImpl::ExceptionBaseImpl(int _line, const char* _file) noexcept
 	:line(_line)
 	,file(_file)
 {}
 
-const char* ExceptionImpl::what() const noexcept
+const char* ExceptionBaseImpl::what() const noexcept
 {
 	std::ostringstream oss;
 	oss << GetType()<< "!" << std::endl
@@ -14,22 +16,22 @@ const char* ExceptionImpl::what() const noexcept
 	return whatBuffer.c_str();
 }
 
-const char* ExceptionImpl::GetType() const noexcept
+const char* ExceptionBaseImpl::GetType() const noexcept
 {
 	return "Unknown Exception";
 }
 
-int ExceptionImpl::GetLine() const noexcept
+int ExceptionBaseImpl::GetLine() const noexcept
 {
 	return line;
 }
 
-const std::string& ExceptionImpl::GetFile() const noexcept
+const std::string& ExceptionBaseImpl::GetFile() const noexcept
 {
 	return file;
 }
 
-std::string ExceptionImpl::GetOriginString() const noexcept
+std::string ExceptionBaseImpl::GetOriginString() const noexcept
 {
 	std::ostringstream oss;
 	oss << "[File]: " << file << std::endl

@@ -23,7 +23,8 @@
     <ClInclude Include="..\res\ICON_1.h" />
     <ClInclude Include="..\src\Application.h" />
     <ClInclude Include="..\src\ArgumentList.h" />
-    <ClInclude Include="..\src\ExceptionImpl.h" />
+    <ClInclude Include="..\src\Core.h" />
+    <ClInclude Include="..\src\ExceptionBaseImpl.h" />
     <ClInclude Include="..\src\Graphics.h" />
     <ClInclude Include="..\src\Keyboard.h" />
     <ClInclude Include="..\src\Mouse.h" />
@@ -71,10 +72,12 @@
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">
     <OutDir>$(SolutionDir)..\bin\$(Platform)\$(Configuration)\</OutDir>
     <IntDir>$(SolutionDir)..\int\$(Platform)\$(Configuration)\</IntDir>
+    <TargetName>DX_3D11</TargetName>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|x64'">
     <OutDir>$(SolutionDir)..\bin\$(Platform)\$(Configuration)\</OutDir>
     <IntDir>$(SolutionDir)..\int\$(Platform)\$(Configuration)\</IntDir>
+    <TargetName>DX_3D11</TargetName>
   </PropertyGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">
     <ClCompile>
@@ -86,7 +89,7 @@
       <MultiProcessorCompilation>true</MultiProcessorCompilation>
       <RuntimeLibrary>MultiThreadedDebug</RuntimeLibrary>
       <FloatingPointModel>Fast</FloatingPointModel>
-      <PreprocessorDefinitions>_MBCS;%(PreprocessorDefinitions);;FULL_WINTARD</PreprocessorDefinitions>
+      <PreprocessorDefinitions>_MBCS;%(PreprocessorDefinitions);FULL_WINTARD</PreprocessorDefinitions>
     </ClCompile>
     <Link>
       <SubSystem>Windows</SubSystem>

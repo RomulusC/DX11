@@ -2,10 +2,10 @@
 #include <exception>
 #include <string>
 
-class ExceptionImpl : public std::exception
+class ExceptionBaseImpl : public std::exception
 {
 public:
-	ExceptionImpl(int _line, const char* _file) noexcept;
+	ExceptionBaseImpl(int _line, const char* _file) noexcept;
 	const char* what() const noexcept override;
 	virtual const char* GetType() const noexcept;
 	int GetLine() const noexcept;
