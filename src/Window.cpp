@@ -58,6 +58,8 @@ Window::Window(int _width, int _height, const char* name)
 	{
 		appSpec.right = 1280;
 		appSpec.bottom = 720;
+		m_width = appSpec.right;
+		m_height = appSpec.bottom;
 	}
 	long int winConfig = WS_CAPTION | WS_MINIMIZEBOX | WS_MAXIMIZEBOX | WS_SYSMENU;
 	BOOL result = AdjustWindowRect(&appSpec, winConfig, FALSE);

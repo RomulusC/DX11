@@ -77,7 +77,7 @@ void Graphics::EndFrame()
 
 void Graphics::ClearBuffer(float _red, float _green, float _blue) noexcept
 {
-	const float color[] = { _red, _green, _blue };
+	const float color[] = { _red, _green, _blue, 0.0f};
 	m_pDeviceCtx->ClearRenderTargetView(m_pRTV.Get(), color);
 }
 
@@ -117,7 +117,7 @@ void Graphics::DrawTestTriangle()
 	// create pixel shader
 	Microsoft::WRL::ComPtr<ID3D11PixelShader> pPixelShader;
 	Microsoft::WRL::ComPtr<ID3DBlob> pBlob;
-	GFX_THROW_FAILED(D3DReadFileToBlob(L"../res/shaders/PixelShader.cso", &pBlob));
+	GFX_THROW_FAILED(D3DReadFileToBlob(L"../shaders/PixelShader.cso", &pBlob));
 	GFX_THROW_FAILED(m_pDevice->CreatePixelShader(pBlob->GetBufferPointer(), pBlob->GetBufferSize(), nullptr, &pPixelShader));
 
 	// bind pixel shader
@@ -126,7 +126,7 @@ void Graphics::DrawTestTriangle()
 
 	// create vertex shader
 	Microsoft::WRL::ComPtr<ID3D11VertexShader> pVertexShader;
-	GFX_THROW_FAILED(D3DReadFileToBlob(L"../res/shaders/VertexShader.cso", &pBlob));
+	GFX_THROW_FAILED(D3DReadFileToBlob(L"../shaders/VertexShader.cso", &pBlob));
 	GFX_THROW_FAILED(m_pDevice->CreateVertexShader(pBlob->GetBufferPointer(), pBlob->GetBufferSize(), nullptr, &pVertexShader));
 
 	// bind vertex shader
