@@ -83,8 +83,8 @@ Window::Window(int _width, int _height, const char* name)
 		CHWND_THROW_LAST_EXCEPT();
 	}	
 
-	ShowWindow(m_hWnd, SW_SHOW);
 	m_pGfx = std::make_unique<Graphics>(m_hWnd);
+	ShowWindow(m_hWnd, SW_SHOW);
 }
 
 Window::~Window()

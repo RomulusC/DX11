@@ -5,7 +5,8 @@
 
 #define GFX_THROW_FAILED(_hr) if( FAILED(_hr)){ auto ex = Graphics::HrException(__LINE__, __FILE__, _hr); OutputDebugString(ex.what()); DEBUG_BREAK(); throw ex;}
 #define GFX_DEVICE_REMOVED_EXCEPT(_hr)  auto ex = Graphics::DeviceRemovedException(__LINE__, __FILE__, _hr); OutputDebugString(ex.what()); DEBUG_BREAK(); throw ex
-Graphics::Graphics(HWND _hWnd)	
+
+	Graphics::Graphics(HWND _hWnd)	
 	: m_pDevice(nullptr)
 	, m_pDeviceCtx(nullptr)
 	, m_pSwapChain(nullptr)
@@ -43,39 +44,19 @@ Graphics::Graphics(HWND _hWnd)
 		&m_pDeviceCtx
 	));
 	
-	ID3D11Resource* pBackBuffer = nullptr;
+	Microsoft::WRL::ComPtr<ID3D11Resource> pBackBuffer;
+
 	GFX_THROW_FAILED(m_pSwapChain->GetBuffer(
 		0u/*back buffer*/,
 		__uuidof(ID3D11Resource)/*COM create resource*/,
-		reinterpret_cast<void**>(&pBackBuffer)/*get pointer to backbuffer*/
+		&pBackBuffer/*get pointer to backbuffer*/
 	));
 
 	GFX_THROW_FAILED(m_pDevice->CreateRenderTargetView(
-		pBackBuffer,
+		pBackBuffer.Get(),
 		nullptr, // RTV desc
 		&m_pRTV
 	));
-	pBackBuffer->Release();
-}
-
-Graphics::~Graphics()
-{
-	if (m_pRTV != nullptr)
-	{
-		m_pRTV->Release();
-	}
-	if (m_pSwapChain != nullptr)
-	{
-		m_pSwapChain->Release();
-	}
-	if (m_pDeviceCtx != nullptr)
-	{
-		m_pDeviceCtx->Release();
-	}
-	if (m_pDevice != nullptr)
-	{
-		m_pDevice->Release();
-	}
 }
 
 void Graphics::EndFrame()
@@ -94,7 +75,7 @@ void Graphics::EndFrame()
 void Graphics::ClearBuffer(float _red, float _green, float _blue, float _alpha) noexcept
 {
 	const float color[] = { _red, _green, _blue, _alpha };
-	m_pDeviceCtx->ClearRenderTargetView(m_pRTV, color);
+	m_pDeviceCtx->ClearRenderTargetView(m_pRTV.Get(), color);
 }
 
 Graphics::HrException::HrException(int _line, const char* _file, HRESULT _hr) noexcept

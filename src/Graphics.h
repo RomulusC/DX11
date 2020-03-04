@@ -1,6 +1,7 @@
 #pragma once
 #include <d3d11.h>
 #include "ExceptionBaseImpl.h"
+#include <wrl.h>
 
 class Graphics
 {
@@ -27,15 +28,17 @@ public:
 	};
 
 	Graphics(HWND hWnd);
-	~Graphics();
+	~Graphics() = default;
 	Graphics(const Graphics&) = delete;
 	Graphics& operator=(const Graphics&) = delete;
 
 	void EndFrame();
 	void ClearBuffer(float _red, float _green, float _blue, float _alpha) noexcept;
 private:
-	ID3D11Device* m_pDevice;
-	ID3D11DeviceContext* m_pDeviceCtx;
-	IDXGISwapChain* m_pSwapChain;
-	ID3D11RenderTargetView* m_pRTV;
+	Microsoft::WRL::ComPtr<ID3D11Device> m_pDevice;
+	Microsoft::WRL::ComPtr<ID3D11DeviceContext> m_pDeviceCtx;
+	Microsoft::WRL::ComPtr<IDXGISwapChain> m_pSwapChain;
+	Microsoft::WRL::ComPtr<ID3D11RenderTargetView> m_pRTV;
+	// when using get of operator (&), it destructs (by calling release) and then writes the address
+	// if you wish to obtain ComPtr obj as a reference, use .GetAddressOf()
 };
