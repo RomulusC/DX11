@@ -1,16 +1,19 @@
 #include "Graphics.h"
 #include "ExceptionBaseImpl.h"
 #include "Core.h"
+#include <d3dcompiler.h>
 #include <sstream>
 
 #define GFX_THROW_FAILED(_hr) if( FAILED(_hr)){ auto ex = Graphics::HrException(__LINE__, __FILE__, _hr); OutputDebugString(ex.what()); DEBUG_BREAK(); throw ex;}
 #define GFX_DEVICE_REMOVED_EXCEPT(_hr)  auto ex = Graphics::DeviceRemovedException(__LINE__, __FILE__, _hr); OutputDebugString(ex.what()); DEBUG_BREAK(); throw ex
 
-	Graphics::Graphics(HWND _hWnd)	
+	Graphics::Graphics(HWND _hWnd, unsigned int _ResWidth, unsigned int _ResHeight)
 	: m_pDevice(nullptr)
 	, m_pDeviceCtx(nullptr)
 	, m_pSwapChain(nullptr)
 	, m_pRTV(nullptr)
+	, m_xRes(_ResWidth)
+	, m_yRes(_ResHeight)
 {
 	DXGI_SWAP_CHAIN_DESC desc = {};
 	desc.BufferDesc.Width = 0;
@@ -72,10 +75,101 @@ void Graphics::EndFrame()
 	}
 }
 
-void Graphics::ClearBuffer(float _red, float _green, float _blue, float _alpha) noexcept
+void Graphics::ClearBuffer(float _red, float _green, float _blue) noexcept
 {
-	const float color[] = { _red, _green, _blue, _alpha };
+	const float color[] = { _red, _green, _blue };
 	m_pDeviceCtx->ClearRenderTargetView(m_pRTV.Get(), color);
+}
+
+void Graphics::DrawTestTriangle()
+{
+	struct Vertex
+	{
+		float x;
+		float y;
+	};
+
+	// create vertex buffer (1 2d triangle at center of screen)
+	const Vertex vertices[] =
+	{
+		{ 0.0f,0.5f },
+		{ 0.5f,-0.5f },
+		{ -0.5f,-0.5f },
+	};
+	Microsoft::WRL::ComPtr<ID3D11Buffer> pVertexBuffer;
+	D3D11_BUFFER_DESC bd = {};
+	bd.BindFlags = D3D11_BIND_VERTEX_BUFFER;
+	bd.Usage = D3D11_USAGE_DEFAULT;
+	bd.CPUAccessFlags = 0u;
+	bd.MiscFlags = 0u;
+	bd.ByteWidth = sizeof(vertices);
+	bd.StructureByteStride = sizeof(Vertex);
+	D3D11_SUBRESOURCE_DATA sd = {};
+	sd.pSysMem = vertices;
+	GFX_THROW_FAILED(m_pDevice->CreateBuffer(&bd, &sd, &pVertexBuffer));
+
+	// Bind vertex buffer to pipeline
+	const UINT stride = sizeof(Vertex);
+	const UINT offset = 0u;
+	m_pDeviceCtx->IASetVertexBuffers(0u, 1u, pVertexBuffer.GetAddressOf(), &stride, &offset);
+
+
+	// create pixel shader
+	Microsoft::WRL::ComPtr<ID3D11PixelShader> pPixelShader;
+	Microsoft::WRL::ComPtr<ID3DBlob> pBlob;
+	GFX_THROW_FAILED(D3DReadFileToBlob(L"../res/shaders/PixelShader.cso", &pBlob));
+	GFX_THROW_FAILED(m_pDevice->CreatePixelShader(pBlob->GetBufferPointer(), pBlob->GetBufferSize(), nullptr, &pPixelShader));
+
+	// bind pixel shader
+	m_pDeviceCtx->PSSetShader(pPixelShader.Get(), nullptr, 0u);
+
+
+	// create vertex shader
+	Microsoft::WRL::ComPtr<ID3D11VertexShader> pVertexShader;
+	GFX_THROW_FAILED(D3DReadFileToBlob(L"../res/shaders/VertexShader.cso", &pBlob));
+	GFX_THROW_FAILED(m_pDevice->CreateVertexShader(pBlob->GetBufferPointer(), pBlob->GetBufferSize(), nullptr, &pVertexShader));
+
+	// bind vertex shader
+	m_pDeviceCtx->VSSetShader(pVertexShader.Get(), nullptr, 0u);
+
+
+	// input (vertex) layout (2d position only)
+	Microsoft::WRL::ComPtr<ID3D11InputLayout> pInputLayout;
+	const D3D11_INPUT_ELEMENT_DESC ied[] =
+	{
+		{ "Position",0,DXGI_FORMAT_R32G32_FLOAT,0,0,D3D11_INPUT_PER_VERTEX_DATA,0 },
+	};
+	GFX_THROW_FAILED(m_pDevice->CreateInputLayout(
+		ied, (UINT)std::size(ied),
+		pBlob->GetBufferPointer(),
+		pBlob->GetBufferSize(),
+		&pInputLayout
+	));
+
+	// bind vertex layout
+	m_pDeviceCtx->IASetInputLayout(pInputLayout.Get());
+
+
+	// bind render target
+	m_pDeviceCtx->OMSetRenderTargets(1u, m_pRTV.GetAddressOf(), nullptr);
+
+
+	// Set primitive topology to triangle list (groups of 3 vertices)
+	m_pDeviceCtx->IASetPrimitiveTopology(D3D11_PRIMITIVE_TOPOLOGY_TRIANGLELIST);
+
+
+	// configure viewport
+	D3D11_VIEWPORT vp;
+	vp.Width = 800;
+	vp.Height = 600;
+	vp.MinDepth = 0;
+	vp.MaxDepth = 1;
+	vp.TopLeftX = 0;
+	vp.TopLeftY = 0;
+	m_pDeviceCtx->RSSetViewports(1u, &vp);
+
+
+	m_pDeviceCtx->Draw((UINT)std::size(vertices), 0u);
 }
 
 Graphics::HrException::HrException(int _line, const char* _file, HRESULT _hr) noexcept

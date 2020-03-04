@@ -24,6 +24,7 @@ int Application::Go()
 
 void Application::DoFrame()
 {
+	// Input
 	auto keyEvent = m_window.m_keyboard.ReadKey();
 	if (keyEvent.has_value() && (keyEvent->IsPressed()||keyEvent->IsReleased()))
 	{
@@ -54,8 +55,12 @@ void Application::DoFrame()
 			break;
 		}
 		OutputDebugString(ss.str().c_str());
-	}
+	}	
 	
-	m_window.GetGfx().ClearBuffer(.28f, .6f, 1.0f, 1.0f);
-	m_window.GetGfx().EndFrame();
+	m_window.GetGfx().ClearBuffer(.28f, .6f, 1.0f);
+
+	// Draw things
+	m_window.GetGfx().DrawTestTriangle();
+
+	m_window.GetGfx().EndFrame(); // Calls present.
 }

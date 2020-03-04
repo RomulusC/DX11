@@ -27,16 +27,19 @@ public:
 		const char* GetType() const noexcept override;
 	};
 
-	Graphics(HWND hWnd);
+	Graphics(HWND hWnd, unsigned int _ResWidth, unsigned int _ResHeight);
 	~Graphics() = default;
 	Graphics(const Graphics&) = delete;
 	Graphics& operator=(const Graphics&) = delete;
 
+	void ClearBuffer(float _red, float _green, float _blue) noexcept;
+	void DrawTestTriangle();
 	void EndFrame();
-	void ClearBuffer(float _red, float _green, float _blue, float _alpha) noexcept;
+	
 private:
-	Microsoft::WRL::ComPtr<ID3D11Device> m_pDevice;
-	Microsoft::WRL::ComPtr<ID3D11DeviceContext> m_pDeviceCtx;
+	unsigned int m_xRes, m_yRes;
+	Microsoft::WRL::ComPtr<ID3D11Device> m_pDevice; // Allocating things (creates)
+	Microsoft::WRL::ComPtr<ID3D11DeviceContext> m_pDeviceCtx; // Config pipeline, issuing commands 
 	Microsoft::WRL::ComPtr<IDXGISwapChain> m_pSwapChain;
 	Microsoft::WRL::ComPtr<ID3D11RenderTargetView> m_pRTV;
 	// when using get of operator (&), it destructs (by calling release) and then writes the address
