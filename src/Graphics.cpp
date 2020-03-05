@@ -60,6 +60,20 @@
 		nullptr, // RTV desc
 		&m_pRTV
 	));
+
+	// bind render target
+	m_pDeviceCtx->OMSetRenderTargets(1u, m_pRTV.GetAddressOf(), nullptr);
+
+	// configure viewport
+	D3D11_VIEWPORT vp;
+	vp.Width = (FLOAT)m_xRes;
+	vp.Height = (FLOAT)m_yRes;
+	vp.MinDepth = 0;
+	vp.MaxDepth = 1;
+	vp.TopLeftX = 0;
+	vp.TopLeftY = 0;
+	m_pDeviceCtx->RSSetViewports(1u, &vp);
+	
 }
 
 void Graphics::EndFrame()
@@ -83,19 +97,30 @@ void Graphics::ClearBuffer(float _red, float _green, float _blue) noexcept
 
 void Graphics::DrawTestTriangle()
 {
+	// Set primitive topology to triangle list (groups of 3 vertices)
+	m_pDeviceCtx->IASetPrimitiveTopology(D3D11_PRIMITIVE_TOPOLOGY_TRIANGLELIST);
+
 	struct Vertex
 	{
-		float x;
-		float y;
+		struct
+		{
+			float x, y, z;
+		}pos;
+		struct
+		{
+			unsigned char r, g, b, a;
+		};
 	};
 
 	// create vertex buffer (1 2d triangle at center of screen)
 	const Vertex vertices[] =
 	{
-		{ 0.0f,0.5f },
-		{ 0.5f,-0.5f },
-		{ -0.5f,-0.5f },
+		{ -0.5f, 0.5f, 1.0f, 255,  0,  0,255 },
+		{  0.5f, 0.5f, 1.0f,   0,255,  0,255 },
+		{  0.5f,-0.5f, 1.0f,   0,  0,255,255 },
+		{ -0.5f,-0.5f, 0.7f,  0,   0,  0,255 },
 	};
+	
 	Microsoft::WRL::ComPtr<ID3D11Buffer> pVertexBuffer;
 	D3D11_BUFFER_DESC bd = {};
 	bd.BindFlags = D3D11_BIND_VERTEX_BUFFER;
@@ -112,6 +137,26 @@ void Graphics::DrawTestTriangle()
 	const UINT stride = sizeof(Vertex);
 	const UINT offset = 0u;
 	m_pDeviceCtx->IASetVertexBuffers(0u, 1u, pVertexBuffer.GetAddressOf(), &stride, &offset);
+
+	const short indices[] =
+	{
+		0,1,2,
+		2,3,0,
+	};
+	
+	Microsoft::WRL::ComPtr<ID3D11Buffer> pIndexBuffer;
+	D3D11_BUFFER_DESC ib = {};
+	ib.BindFlags = D3D11_BIND_INDEX_BUFFER;
+	ib.Usage = D3D11_USAGE_DEFAULT;
+	ib.CPUAccessFlags = 0u;
+	ib.CPUAccessFlags = 0u;
+	ib.ByteWidth = sizeof(indices);
+	D3D11_SUBRESOURCE_DATA isd = {};
+	isd.pSysMem = indices;
+
+	GFX_THROW_FAILED(m_pDevice->CreateBuffer(&ib, &isd, pIndexBuffer.GetAddressOf()));
+
+	m_pDeviceCtx->IASetIndexBuffer(pIndexBuffer.Get(), DXGI_FORMAT_R16_UINT, 0u);
 
 
 	// create pixel shader
@@ -137,7 +182,8 @@ void Graphics::DrawTestTriangle()
 	Microsoft::WRL::ComPtr<ID3D11InputLayout> pInputLayout;
 	const D3D11_INPUT_ELEMENT_DESC ied[] =
 	{
-		{ "Position",0,DXGI_FORMAT_R32G32_FLOAT,0,0,D3D11_INPUT_PER_VERTEX_DATA,0 },
+		{ "Position",0,DXGI_FORMAT_R32G32B32_FLOAT,0,0,D3D11_INPUT_PER_VERTEX_DATA,0 },
+		{ "Color",0,DXGI_FORMAT_R8G8B8A8_UNORM,0,12u,D3D11_INPUT_PER_VERTEX_DATA,0 },
 	};
 	GFX_THROW_FAILED(m_pDevice->CreateInputLayout(
 		ied, (UINT)std::size(ied),
@@ -149,27 +195,8 @@ void Graphics::DrawTestTriangle()
 	// bind vertex layout
 	m_pDeviceCtx->IASetInputLayout(pInputLayout.Get());
 
-
-	// bind render target
-	m_pDeviceCtx->OMSetRenderTargets(1u, m_pRTV.GetAddressOf(), nullptr);
-
-
-	// Set primitive topology to triangle list (groups of 3 vertices)
-	m_pDeviceCtx->IASetPrimitiveTopology(D3D11_PRIMITIVE_TOPOLOGY_TRIANGLELIST);
-
-
-	// configure viewport
-	D3D11_VIEWPORT vp;
-	vp.Width = (FLOAT)m_xRes;
-	vp.Height = (FLOAT)m_yRes;
-	vp.MinDepth = 0;
-	vp.MaxDepth = 1;
-	vp.TopLeftX = 0;
-	vp.TopLeftY = 0;
-	m_pDeviceCtx->RSSetViewports(1u, &vp);
-
-
-	m_pDeviceCtx->Draw((UINT)std::size(vertices), 0u);
+	m_pDeviceCtx->DrawIndexed((UINT)std::size(indices), 0u, 0);
+	//m_pDeviceCtx->Draw((UINT)std::size(vertices), 0u);
 }
 
 Graphics::HrException::HrException(int _line, const char* _file, HRESULT _hr) noexcept
