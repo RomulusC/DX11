@@ -5,6 +5,7 @@
 #include <sstream>
 #include <DirectXMath.h>
 
+
 namespace DX = DirectX;
 
 #define GFX_THROW_FAILED(_hr) if( FAILED(_hr)){ auto ex = Graphics::HrException(__LINE__, __FILE__, _hr); OutputDebugString(ex.what()); DEBUG_BREAK(); throw ex;}
@@ -130,7 +131,7 @@ void Graphics::ClearBuffer(float _red, float _green, float _blue) noexcept
 	m_pDeviceCtx->ClearDepthStencilView(m_pDSV.Get(), D3D11_CLEAR_DEPTH, 1.0f, 0u);
 }
 
-void Graphics::DrawTestTriangle(float _angle, float _mXPos, float _mYPos)
+void Graphics::DrawTestTriangle(float _angle, float _mXPos, float _mYPos, DX::XMMATRIX _cameraTransform)
 {
 	// Set primitive topology to triangle list (groups of 3 vertices)
 	m_pDeviceCtx->IASetPrimitiveTopology(D3D11_PRIMITIVE_TOPOLOGY_TRIANGLELIST);
@@ -282,8 +283,9 @@ void Graphics::DrawTestTriangle(float _angle, float _mXPos, float _mYPos)
 			DX::XMMatrixTranspose(
 				DX::XMMatrixRotationZ(_angle) *
 				DX::XMMatrixRotationX(_angle) *
-				DX::XMMatrixTranslation(0, 0,_mYPos*2.0f+7.0f ) *
-				DX::XMMatrixPerspectiveFovLH( 1u,(float)m_xRes/ (float)m_yRes, 0.5f, 10.0f)
+				DX::XMMatrixTranslation(_mXPos, 0,_mYPos) *
+				_cameraTransform*
+				DX::XMMatrixPerspectiveFovLH( DX::XMConvertToRadians(m_fov),(float)m_xRes/ (float)m_yRes, 0.5f, 100.0f)
 			)
 		}
 	};

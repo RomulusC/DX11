@@ -5,6 +5,7 @@ Application::Application(int _xRes, int _yRes, const char* _name)
 	: m_name(std::string(_name))
 	, m_window(Window(_xRes, _yRes, _name))
 	, m_timer(Timer())
+	, m_cameraTransform(DirectX::XMMATRIX(DirectX::XMMatrixIdentity()* DirectX::XMMatrixTranslation(0.0f,0.0f,5.0f)))
 	 
 {
 	m_window.m_keyboard.EnableAutoRepeat();
@@ -41,12 +42,17 @@ void Application::DoFrame()
 		switch (mouseEvent->GetType())
 		{		
 		case Mouse::Event::Type::ScrollUp:
-			m_window.GetGfx().m_fov += 1.0f;
-			ss << "SCROLLING: +"<< m_window.GetGfx().m_fov << std::endl;
+			
+			m_cameraTransform *= DirectX::XMMatrixTranslation(0.0f,0.0f,0.25f);
+			
+			//m_window.GetGfx().m_fov += 1.0f;
+			//ss << "SCROLLING: +"<< m_window.GetGfx().m_fov << std::endl;
 			break;
 		case Mouse::Event::Type::ScrollDown:
-			m_window.GetGfx().m_fov -= 1.0f;
-			ss << "SCROLLING: -" << m_window.GetGfx().m_fov << std::endl;
+			m_cameraTransform *= DirectX::XMMatrixTranslation(0.0f, 0.0f, -0.25f);
+
+			//m_window.GetGfx().m_fov -= 1.0f;
+			//ss << "SCROLLING: -" << m_window.GetGfx().m_fov << std::endl;
 
 			break;
 		case Mouse::Event::Type::MMClickPress:
@@ -74,8 +80,8 @@ void Application::DoFrame()
 	m_window.GetGfx().ClearBuffer(.28f, .6f, 1.0f);
 	
 	// Draw things
-	m_window.GetGfx().DrawTestTriangle(m_timer.Peak()*5,x,y);
-	m_window.GetGfx().DrawTestTriangle(-m_timer.Peak(), -x, -y);
+	m_window.GetGfx().DrawTestTriangle(m_timer.Peak()*5,x,y, m_cameraTransform);
+	m_window.GetGfx().DrawTestTriangle(-m_timer.Peak(), -x, -y, m_cameraTransform);
 
 	m_window.GetGfx().EndFrame(); // Calls present.
 }

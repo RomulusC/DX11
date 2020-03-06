@@ -1,6 +1,7 @@
 #pragma once
 #include "Window.h"
 #include "Timer.h"
+#include <DirectXMath.h>
 
 class Application
 {
@@ -14,4 +15,5 @@ private:
 	Window m_window;
 	std::string m_name;
 	Timer m_timer;
+	DirectX::XMMATRIX m_cameraTransform;
 };

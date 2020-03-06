@@ -2,6 +2,7 @@
 #include <d3d11.h>
 #include "ExceptionBaseImpl.h"
 #include <wrl.h>
+#include <DirectXMath.h>
 
 class Graphics
 {
@@ -33,7 +34,7 @@ public:
 	Graphics& operator=(const Graphics&) = delete;
 
 	void ClearBuffer(float _red, float _green, float _blue) noexcept;
-	void DrawTestTriangle(float _angle, float _mXPos, float _mYPos);
+	void DrawTestTriangle(float _angle, float _mXPos, float _mYPos, DirectX::XMMATRIX _cameraTransform);
 	void EndFrame();
 	float m_fov;
 	unsigned int m_xRes, m_yRes;
