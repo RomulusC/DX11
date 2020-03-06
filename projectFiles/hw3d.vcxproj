@@ -28,6 +28,7 @@
     <ClInclude Include="..\src\Graphics.h" />
     <ClInclude Include="..\src\Keyboard.h" />
     <ClInclude Include="..\src\Mouse.h" />
+    <ClInclude Include="..\src\Timer.h" />
     <ClInclude Include="..\src\WinDefines.h" />
     <ClInclude Include="..\src\Window.h" />
   </ItemGroup>
@@ -136,9 +137,11 @@
     </ResourceCompile>
     <FxCompile>
       <ObjectFileOutput Condition="'$(Configuration)|$(Platform)'=='Release|x64'">$(SolutionDir)..\bin\$(Configuration)\Shaders\%(Filename).cso</ObjectFileOutput>
+      <ShaderModel Condition="'$(Configuration)|$(Platform)'=='Release|x64'">4.0</ShaderModel>
     </FxCompile>
     <FxCompile>
       <ObjectFileOutput Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">$(SolutionDir)..\bin\$(Configuration)\Shaders\%(Filename).cso</ObjectFileOutput>
+      <ShaderModel Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">4.0</ShaderModel>
     </FxCompile>
   </ItemDefinitionGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />

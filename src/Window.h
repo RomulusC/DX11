@@ -67,9 +67,10 @@ public:
 public:
 	Keyboard m_keyboard;
 	Mouse m_mouse;
-private:
 	int m_width;
 	int m_height;
+private:
+	
 	HWND m_hWnd;
 	std::unique_ptr<Graphics> m_pGfx;
 	

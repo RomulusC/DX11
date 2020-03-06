@@ -67,8 +67,7 @@ void Mouse::OnMouseMove(int _x, int _y) noexcept
 
 void Mouse::OnLeftPressed(int _x, int _y) noexcept
 {
-	m_xPos = _x;
-	m_yPos = _y;
+	
 	m_leftIsPressed = true;
 	m_eventBuffer.push(Mouse::Event(Event::Type::LPress, *this));
 	TrimBuffer();
@@ -76,8 +75,7 @@ void Mouse::OnLeftPressed(int _x, int _y) noexcept
 
 void Mouse::OnLeftReleased(int _x, int _y) noexcept
 {	
-	m_xPos = _x;
-	m_yPos = _y;
+	
 	m_leftIsPressed = false;
 	m_eventBuffer.push(Mouse::Event(Event::Type::LRelease, *this));
 	TrimBuffer();
@@ -85,8 +83,7 @@ void Mouse::OnLeftReleased(int _x, int _y) noexcept
 
 void Mouse::OnRightPressed(int _x, int _y) noexcept
 {
-	m_xPos = _x;
-	m_yPos = _y;
+	
 	m_rightIsPressed = true;
 	m_eventBuffer.push(Mouse::Event(Event::Type::RPress, *this));
 	TrimBuffer();
@@ -94,8 +91,7 @@ void Mouse::OnRightPressed(int _x, int _y) noexcept
 
 void Mouse::OnRightReleased(int _x, int _y) noexcept
 {
-	m_xPos = _x;
-	m_yPos = _y;
+	
 	m_rightIsPressed = false;
 	m_eventBuffer.push(Mouse::Event(Event::Type::RRelease, *this));
 	TrimBuffer();
@@ -103,8 +99,7 @@ void Mouse::OnRightReleased(int _x, int _y) noexcept
 
 void Mouse::OnMMPressed(int _x, int _y) noexcept
 {
-	m_xPos = _x;
-	m_yPos = _y;
+	
 	m_mmClickPressed = true;
 	m_eventBuffer.push(Mouse::Event(Event::Type::MMClickPress, *this));
 	TrimBuffer();
@@ -112,8 +107,7 @@ void Mouse::OnMMPressed(int _x, int _y) noexcept
 
 void Mouse::OnMMReleased(int _x, int _y) noexcept
 {
-	m_xPos = _x;
-	m_yPos = _y;
+	
 	m_mmClickPressed = false;
 	m_eventBuffer.push(Mouse::Event(Event::Type::MMClickRelease, *this));
 	TrimBuffer();
@@ -137,16 +131,14 @@ void Mouse::OnWheelUpdate(int _x, int _y, int _delta) noexcept
 
 void Mouse::OnWheelUp(int _x, int _y) noexcept
 {
-	m_xPos = _x;
-	m_yPos = _y;
+	
 	m_eventBuffer.push(Mouse::Event(Event::Type::ScrollUp, *this));
 	TrimBuffer();
 }
 
 void Mouse::OnWheelDown(int _x, int _y) noexcept
 {
-	m_xPos = _x;
-	m_yPos = _y;
+	
 	m_eventBuffer.push(Mouse::Event(Event::Type::ScrollDown, *this));
 	TrimBuffer();
 }

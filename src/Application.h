@@ -1,8 +1,10 @@
 #pragma once
 #include "Window.h"
+#include "Timer.h"
 
 class Application
 {
+
 public:
 	Application(int _xRes, int _yRes, const char* _name);
 	int Go();
@@ -11,4 +13,5 @@ private:
 private: 
 	Window m_window;
 	std::string m_name;
+	Timer m_timer;
 };

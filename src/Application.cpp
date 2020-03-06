@@ -4,6 +4,7 @@
 Application::Application(int _xRes, int _yRes, const char* _name)
 	: m_name(std::string(_name))
 	, m_window(Window(_xRes, _yRes, _name))
+	, m_timer(Timer())
 	 
 {
 	m_window.m_keyboard.EnableAutoRepeat();
@@ -40,10 +41,13 @@ void Application::DoFrame()
 		switch (mouseEvent->GetType())
 		{		
 		case Mouse::Event::Type::ScrollUp:
-			ss << "SCROLLING: +" << std::endl;
+			m_window.GetGfx().m_fov += 1.0f;
+			ss << "SCROLLING: +"<< m_window.GetGfx().m_fov << std::endl;
 			break;
 		case Mouse::Event::Type::ScrollDown:
-			ss << "SCROLLING: -" << std::endl;
+			m_window.GetGfx().m_fov -= 1.0f;
+			ss << "SCROLLING: -" << m_window.GetGfx().m_fov << std::endl;
+
 			break;
 		case Mouse::Event::Type::MMClickPress:
 		case Mouse::Event::Type::LPress:
@@ -56,11 +60,22 @@ void Application::DoFrame()
 		}
 		OutputDebugString(ss.str().c_str());
 	}	
+
+
+
+	std::ostringstream ss;
+	ss << m_window.m_mouse.GetPosX() << " " << m_window.m_mouse.GetPosY();
+	float x = m_window.m_mouse.GetPosX() / ((float)m_window.m_width / 2.0f) - 1.0f;
+	float y = -m_window.m_mouse.GetPosY() / ((float)m_window.m_height / 2.0f) + 1.0f;
+	ss << " " << x << " " << y;
+	m_window.ChangeTitle(ss.str().c_str());
+
 	
 	m_window.GetGfx().ClearBuffer(.28f, .6f, 1.0f);
-
+	
 	// Draw things
-	m_window.GetGfx().DrawTestTriangle();
+	m_window.GetGfx().DrawTestTriangle(m_timer.Peak()*5,x,y);
+	m_window.GetGfx().DrawTestTriangle(-m_timer.Peak(), -x, -y);
 
 	m_window.GetGfx().EndFrame(); // Calls present.
 }

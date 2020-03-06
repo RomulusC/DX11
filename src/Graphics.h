@@ -33,15 +33,16 @@ public:
 	Graphics& operator=(const Graphics&) = delete;
 
 	void ClearBuffer(float _red, float _green, float _blue) noexcept;
-	void DrawTestTriangle();
+	void DrawTestTriangle(float _angle, float _mXPos, float _mYPos);
 	void EndFrame();
-	
-private:
+	float m_fov;
 	unsigned int m_xRes, m_yRes;
+private:
 	Microsoft::WRL::ComPtr<ID3D11Device> m_pDevice; // Allocating things (creates)
 	Microsoft::WRL::ComPtr<ID3D11DeviceContext> m_pDeviceCtx; // Config pipeline, issuing commands 
 	Microsoft::WRL::ComPtr<IDXGISwapChain> m_pSwapChain;
 	Microsoft::WRL::ComPtr<ID3D11RenderTargetView> m_pRTV;
+	Microsoft::WRL::ComPtr<ID3D11DepthStencilView> m_pDSV;
 	// when using get of operator (&), it destructs (by calling release) and then writes the address
 	// if you wish to obtain ComPtr obj as a reference, use .GetAddressOf()
 };

@@ -1,15 +1,10 @@
-struct SVOut 
+
+cbuffer ViewProj
 {
-	float4 color : Color;
-	float4 pos : SV_Position;
+	matrix transform;
 };
 
-
-SVOut main(float3 pos : Position, float4 color : Color)
+float4 main(float3 pos : Position) : SV_Position
 {
-	SVOut sv;
-	sv.color = color;
-	sv.pos = float4(pos, 1.0f);
-
-	return sv;
+	return  mul(float4(pos, 1.0f), transform);
 }
