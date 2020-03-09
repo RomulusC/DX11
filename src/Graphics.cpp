@@ -37,11 +37,16 @@ namespace DX = DirectX;
 	desc.SwapEffect = DXGI_SWAP_EFFECT_DISCARD;
 	desc.Flags = 0u;
 
+	UINT debugLayerEnum = 0u;
+#ifndef FINAL
+	debugLayerEnum = D3D11_CREATE_DEVICE_DEBUG;
+#endif
+
 	GFX_THROW_FAILED(D3D11CreateDeviceAndSwapChain(
 		nullptr,
 		D3D_DRIVER_TYPE_HARDWARE,
 		nullptr,
-		D3D11_CREATE_DEVICE_DEBUG,
+		debugLayerEnum,
 		nullptr,
 		0u,
 		D3D11_SDK_VERSION,
