@@ -57,12 +57,10 @@
     <ProjectGuid>{6ADBFF3E-D58C-4614-BDDE-96A3EFA8DAD6}</ProjectGuid>
     <RootNamespace>hw3d</RootNamespace>
     <WindowsTargetPlatformVersion>10.0</WindowsTargetPlatformVersion>
-  </PropertyGroup>
-  <PropertyGroup>
     <LocalDebuggerWorkingDirectory>$(SolutionDir)..\bin\$(Configuration)\</LocalDebuggerWorkingDirectory>
     <DebuggerFlavor>WindowsLocalDebugger</DebuggerFlavor>
-	<PlatformToolset>v142</PlatformToolset>
-  </PropertyGroup>
+	  <PlatformToolset>v142</PlatformToolset>    
+  </PropertyGroup> 
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.Default.props" />
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|x64'" Label="Configuration">
     <ConfigurationType>Application</ConfigurationType>
