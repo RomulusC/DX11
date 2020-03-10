@@ -1,3 +1,4 @@
 *.vs
 /int
 /bin
+/projectFiles/*.vcxproj.user

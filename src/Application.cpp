@@ -26,15 +26,48 @@ int Application::Go()
 
 void Application::DoFrame()
 {
-	// Input
-	auto keyEvent = m_window.m_keyboard.ReadKey();
-	if (keyEvent.has_value() && (keyEvent->IsPressed()||keyEvent->IsReleased()))
+	
+
+	if (m_window.m_keyboard.KeyIsPressed(0x57)) // W
 	{
-		std::ostringstream ss;	
-		
-		ss << std::to_string(keyEvent->GetCode()) << std::endl;
-		OutputDebugString(ss.str().c_str());
+		DirectX::XMFLOAT4 vec = { 0.0f, 0.0f, -1.0f, 0.0f };
+		m_cameraTransform.r[3] = DirectX::XMVectorAdd(m_cameraTransform.r[3], DirectX::XMVectorMultiply(DirectX::XMLoadFloat4(&vec), DirectX::XMMatrixTranspose(m_cameraTransform).r[2]));
 	}
+	if (m_window.m_keyboard.KeyIsPressed(0x41)) // A
+	{
+		DirectX::XMFLOAT4 vec = { 1.0f, 0.0f, 0.0f, 0.0f };
+		m_cameraTransform.r[3] = DirectX::XMVectorAdd(m_cameraTransform.r[3], DirectX::XMVectorMultiply(DirectX::XMLoadFloat4(&vec), DirectX::XMMatrixTranspose(m_cameraTransform).r[0]));
+	}
+	if (m_window.m_keyboard.KeyIsPressed(0x53)) // S
+	{
+		DirectX::XMFLOAT4 vec = { 0.0f, 0.0f, 1.0f, 0.0f };
+		m_cameraTransform.r[3] = DirectX::XMVectorAdd(m_cameraTransform.r[3], DirectX::XMVectorMultiply(DirectX::XMLoadFloat4(&vec), DirectX::XMMatrixTranspose(m_cameraTransform).r[2]));
+	}
+	if (m_window.m_keyboard.KeyIsPressed(0x44)) // D
+	{
+		DirectX::XMFLOAT4 vec = { -1.0f, 0.0f, 0.0f, 0.0f };
+		m_cameraTransform.r[3] = DirectX::XMVectorAdd(m_cameraTransform.r[3], DirectX::XMVectorMultiply(DirectX::XMLoadFloat4(&vec), DirectX::XMMatrixTranspose(m_cameraTransform).r[0]));
+	}
+	if (m_window.m_keyboard.KeyIsPressed(0x51)) // Q
+	{
+		m_cameraTransform *= DirectX::XMMatrixRotationZ(DirectX::XMConvertToRadians(1.0f));
+	}
+	if (m_window.m_keyboard.KeyIsPressed(0x45)) // E
+	{
+		m_cameraTransform *= DirectX::XMMatrixRotationZ(DirectX::XMConvertToRadians(-1.0f)); /*need cross product of x and z to get up vector*/
+	}// more here: https://gamedev.stackexchange.com/questions/90208/how-to-calculate-a-direction-vector-for-camera
+	if (m_window.m_keyboard.KeyIsPressed(0x20)) // SPACE
+	{
+		DirectX::XMFLOAT4 vec = { 0.0f, -1.0f, 0.0f, 0.0f };
+		m_cameraTransform.r[3] = DirectX::XMVectorAdd(m_cameraTransform.r[3], DirectX::XMVectorMultiply(DirectX::XMLoadFloat4(&vec), DirectX::XMMatrixTranspose(m_cameraTransform).r[1]));
+
+	}
+	if (m_window.m_keyboard.KeyIsPressed(0x11)) // CTRL
+	{
+		DirectX::XMFLOAT4 vec = { 0.0f, 1.0f, 0.0f, 0.0f };
+		m_cameraTransform.r[3] = DirectX::XMVectorAdd(m_cameraTransform.r[3], DirectX::XMVectorMultiply(DirectX::XMLoadFloat4(&vec), DirectX::XMMatrixTranspose(m_cameraTransform).r[1])); 
+	}
+
 	auto mouseEvent = m_window.m_mouse.Read();
 	if (mouseEvent.has_value())
 	{
@@ -42,19 +75,18 @@ void Application::DoFrame()
 		switch (mouseEvent->GetType())
 		{		
 		case Mouse::Event::Type::ScrollUp:
+		{
 			
-			m_cameraTransform *= DirectX::XMMatrixTranslation(0.0f,0.0f,0.25f);
-			
-			//m_window.GetGfx().m_fov += 1.0f;
-			//ss << "SCROLLING: +"<< m_window.GetGfx().m_fov << std::endl;
+			DirectX::XMFLOAT4 vec = { 1.0f, 0.0f, 0.0f, 0.0f };
+			m_cameraTransform.r[3] = DirectX::XMVectorAdd(m_cameraTransform.r[3], DirectX::XMVectorMultiply(DirectX::XMLoadFloat4(&vec), DirectX::XMMatrixTranspose(m_cameraTransform).r[0]));
 			break;
+		}
 		case Mouse::Event::Type::ScrollDown:
-			m_cameraTransform *= DirectX::XMMatrixTranslation(0.0f, 0.0f, -0.25f);
-
-			//m_window.GetGfx().m_fov -= 1.0f;
-			//ss << "SCROLLING: -" << m_window.GetGfx().m_fov << std::endl;
-
+		{
+			DirectX::XMFLOAT4 vec = { -1.0f, 0.0f, 0.0f, 0.0f };
+			m_cameraTransform.r[3] = DirectX::XMVectorAdd(m_cameraTransform.r[3], DirectX::XMVectorMultiply(DirectX::XMLoadFloat4(&vec), DirectX::XMMatrixTranspose(m_cameraTransform).r[0]));
 			break;
+		}
 		case Mouse::Event::Type::MMClickPress:
 		case Mouse::Event::Type::LPress:
 		case Mouse::Event::Type::RPress:
@@ -81,7 +113,7 @@ void Application::DoFrame()
 	
 	// Draw things
 	m_window.GetGfx().DrawTestTriangle(m_timer.Peak()*5,x,y, m_cameraTransform);
-	m_window.GetGfx().DrawTestTriangle(-m_timer.Peak(), -x, -y, m_cameraTransform);
+	m_window.GetGfx().DrawTestTriangle(0, 0, 0, m_cameraTransform);
 
 	m_window.GetGfx().EndFrame(); // Calls present.
 }
