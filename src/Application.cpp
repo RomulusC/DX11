@@ -31,22 +31,22 @@ void Application::DoFrame()
 	if (m_window.m_keyboard.KeyIsPressed(0x57)) // W
 	{
 		DirectX::XMFLOAT4 vec = { 0.0f, 0.0f, -1.0f, 0.0f };
-		m_cameraTransform.r[3] = DirectX::XMVectorAdd(m_cameraTransform.r[3], DirectX::XMVectorMultiply(DirectX::XMLoadFloat4(&vec), DirectX::XMMatrixTranspose(m_cameraTransform).r[2]));
+		m_cameraTransform.r[3] = DirectX::XMVectorAdd(m_cameraTransform.r[3], DirectX::XMVectorMultiply(DirectX::XMLoadFloat4(&vec), m_cameraTransform.r[2]));
 	}
 	if (m_window.m_keyboard.KeyIsPressed(0x41)) // A
 	{
 		DirectX::XMFLOAT4 vec = { 1.0f, 0.0f, 0.0f, 0.0f };
-		m_cameraTransform.r[3] = DirectX::XMVectorAdd(m_cameraTransform.r[3], DirectX::XMVectorMultiply(DirectX::XMLoadFloat4(&vec), DirectX::XMMatrixTranspose(m_cameraTransform).r[0]));
+		m_cameraTransform.r[3] = DirectX::XMVectorAdd(m_cameraTransform.r[3], DirectX::XMVectorMultiply(DirectX::XMLoadFloat4(&vec), m_cameraTransform.r[0]));
 	}
 	if (m_window.m_keyboard.KeyIsPressed(0x53)) // S
 	{
 		DirectX::XMFLOAT4 vec = { 0.0f, 0.0f, 1.0f, 0.0f };
-		m_cameraTransform.r[3] = DirectX::XMVectorAdd(m_cameraTransform.r[3], DirectX::XMVectorMultiply(DirectX::XMLoadFloat4(&vec), DirectX::XMMatrixTranspose(m_cameraTransform).r[2]));
+		m_cameraTransform.r[3] = DirectX::XMVectorAdd(m_cameraTransform.r[3], DirectX::XMVectorMultiply(DirectX::XMLoadFloat4(&vec), m_cameraTransform.r[2]));
 	}
 	if (m_window.m_keyboard.KeyIsPressed(0x44)) // D
 	{
 		DirectX::XMFLOAT4 vec = { -1.0f, 0.0f, 0.0f, 0.0f };
-		m_cameraTransform.r[3] = DirectX::XMVectorAdd(m_cameraTransform.r[3], DirectX::XMVectorMultiply(DirectX::XMLoadFloat4(&vec), DirectX::XMMatrixTranspose(m_cameraTransform).r[0]));
+		m_cameraTransform.r[3] = DirectX::XMVectorAdd(m_cameraTransform.r[3], DirectX::XMVectorMultiply(DirectX::XMLoadFloat4(&vec), m_cameraTransform.r[0]));
 	}
 	if (m_window.m_keyboard.KeyIsPressed(0x51)) // Q
 	{
@@ -59,13 +59,13 @@ void Application::DoFrame()
 	if (m_window.m_keyboard.KeyIsPressed(0x20)) // SPACE
 	{
 		DirectX::XMFLOAT4 vec = { 0.0f, -1.0f, 0.0f, 0.0f };
-		m_cameraTransform.r[3] = DirectX::XMVectorAdd(m_cameraTransform.r[3], DirectX::XMVectorMultiply(DirectX::XMLoadFloat4(&vec), DirectX::XMMatrixTranspose(m_cameraTransform).r[1]));
+		m_cameraTransform.r[3] = DirectX::XMVectorAdd(m_cameraTransform.r[3], DirectX::XMVectorMultiply(DirectX::XMLoadFloat4(&vec), m_cameraTransform.r[1]));
 
 	}
 	if (m_window.m_keyboard.KeyIsPressed(0x11)) // CTRL
 	{
 		DirectX::XMFLOAT4 vec = { 0.0f, 1.0f, 0.0f, 0.0f };
-		m_cameraTransform.r[3] = DirectX::XMVectorAdd(m_cameraTransform.r[3], DirectX::XMVectorMultiply(DirectX::XMLoadFloat4(&vec), DirectX::XMMatrixTranspose(m_cameraTransform).r[1])); 
+		m_cameraTransform.r[3] = DirectX::XMVectorAdd(m_cameraTransform.r[3], DirectX::XMVectorMultiply(DirectX::XMLoadFloat4(&vec), m_cameraTransform.r[1])); 
 	}
 
 	auto mouseEvent = m_window.m_mouse.Read();
