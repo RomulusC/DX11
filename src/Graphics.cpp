@@ -286,11 +286,11 @@ void Graphics::DrawTestTriangle(float _angle, float _mXPos, float _mYPos, DX::XM
 	{
 		{
 			DX::XMMatrixTranspose(
+				DX::XMMatrixTranslation(_mXPos, 0,_mYPos) *
 				DX::XMMatrixRotationZ(_angle) *
 				DX::XMMatrixRotationX(_angle) *
-				DX::XMMatrixTranslation(_mXPos, 0,_mYPos) *
 				_cameraTransform*
-				DX::XMMatrixPerspectiveFovLH( DX::XMConvertToRadians(m_fov),(float)m_xRes/ (float)m_yRes, 0.5f, 100.0f)
+				DX::XMMatrixPerspectiveFovLH( DX::XMConvertToRadians(m_fov),(float)m_xRes/ (float)m_yRes, 0.5f, 100000.0f)
 			)
 		}
 	};

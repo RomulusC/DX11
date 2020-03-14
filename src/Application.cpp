@@ -1,11 +1,12 @@
 #include "Application.h"
 #include <sstream>
+#include <iomanip>
 
 Application::Application(int _xRes, int _yRes, const char* _name)
 	: m_name(std::string(_name))
 	, m_window(Window(_xRes, _yRes, _name))
 	, m_timer(Timer())
-	, m_cameraTransform(DirectX::XMMATRIX(DirectX::XMMatrixIdentity()* DirectX::XMMatrixTranslation(0.0f,0.0f,5.0f)))
+	, m_cameraTransform(DirectX::XMMATRIX(DirectX::XMMatrixIdentity()))
 	 
 {
 	m_window.m_keyboard.EnableAutoRepeat();
@@ -27,7 +28,7 @@ int Application::Go()
 void Application::DoFrame()
 {
 	float movementUnit = 1.0f;
-	DirectX::XMFLOAT3 relCameraMovement = { 0.0f, 0.0f, 0.0f };
+	DirectX::XMFLOAT4 relCameraMovement = { 0.0f, 0.0f, 0.0f, 0.0f };
 
 
 	if (m_window.m_keyboard.KeyIsPressed(0x57)) // W
@@ -48,11 +49,11 @@ void Application::DoFrame()
 	}
 	if (m_window.m_keyboard.KeyIsPressed(0x51)) // Q
 	{
-		m_cameraTransform *= DirectX::XMMatrixRotationZ(DirectX::XMConvertToRadians(1.0f));
+		m_cameraTransform *= DirectX::XMMatrixRotationZ(DirectX::XMConvertToRadians(-1.0f));
 	}
 	if (m_window.m_keyboard.KeyIsPressed(0x45)) // E
 	{
-		m_cameraTransform *= DirectX::XMMatrixRotationZ(DirectX::XMConvertToRadians(-1.0f)); /*need cross product of x and z to get up vector*/
+		m_cameraTransform *= DirectX::XMMatrixRotationZ(DirectX::XMConvertToRadians(1.0f)); /*need cross product of x and z to get up vector*/
 	}// more here: https://gamedev.stackexchange.com/questions/90208/how-to-calculate-a-direction-vector-for-camera
 	if (m_window.m_keyboard.KeyIsPressed(0x20)) // SPACE
 	{
@@ -78,7 +79,8 @@ void Application::DoFrame()
 	{
 		m_cameraTransform *= DirectX::XMMatrixRotationX(DirectX::XMConvertToRadians(-1.0f));
 	}
-	m_cameraTransform = m_cameraTransform * DirectX::XMMatrixTranslation(-relCameraMovement.x, -relCameraMovement.y, -relCameraMovement.z);
+	
+	m_cameraTransform *=  DirectX::XMMatrixTranslation(-relCameraMovement.x, -relCameraMovement.y, -relCameraMovement.z);
 	
 	auto mouseEvent = m_window.m_mouse.Read();
 	if (mouseEvent.has_value())
@@ -102,9 +104,24 @@ void Application::DoFrame()
 	}	
 
 
+	DirectX::XMFLOAT4X4 temp;
+	DirectX::XMStoreFloat4x4(&temp, m_cameraTransform);
+	DirectX::XMFLOAT4 worldPos = {};
+	worldPos.x += temp._11 * temp._41;
+	worldPos.y += temp._21 * temp._41;
+	worldPos.z += temp._31 * temp._41;
 
+	worldPos.x += temp._12 * temp._42;
+	worldPos.y += temp._22 * temp._42;
+	worldPos.z += temp._32 * temp._42;
+
+	worldPos.x += temp._13 * temp._43;
+	worldPos.y += temp._23 * temp._43;
+	worldPos.z += temp._33 * temp._43;
+
+	
 	std::ostringstream ss;
-	ss <<"X: "<<DirectX::XMVectorGetX(m_cameraTransform.r[3])  << " Y:" << DirectX::XMVectorGetY(m_cameraTransform.r[3])<< " Z:" << DirectX::XMVectorGetZ(m_cameraTransform.r[3]);
+	ss << std::fixed <<std::setprecision(2)<<"World_Pos: "<<"X: "<< worldPos.x << " Y:" << worldPos.y << " Z:" << worldPos.z;
 	float x = m_window.m_mouse.GetPosX() / ((float)m_window.m_width / 2.0f) - 1.0f;
 	float y = -m_window.m_mouse.GetPosY() / ((float)m_window.m_height / 2.0f) + 1.0f;
 	//ss << " " << x << " " << y;
