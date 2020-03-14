@@ -26,27 +26,25 @@ int Application::Go()
 
 void Application::DoFrame()
 {
-	
+	float movementUnit = 1.0f;
+	DirectX::XMFLOAT3 relCameraMovement = { 0.0f, 0.0f, 0.0f };
+
 
 	if (m_window.m_keyboard.KeyIsPressed(0x57)) // W
 	{
-		DirectX::XMFLOAT4 vec = { 0.0f, 0.0f, -1.0f, 0.0f };
-		m_cameraTransform.r[3] = DirectX::XMVectorAdd(m_cameraTransform.r[3], DirectX::XMVectorMultiply(DirectX::XMLoadFloat4(&vec), m_cameraTransform.r[2]));
+		relCameraMovement.z += movementUnit;
 	}
 	if (m_window.m_keyboard.KeyIsPressed(0x41)) // A
 	{
-		DirectX::XMFLOAT4 vec = { 1.0f, 0.0f, 0.0f, 0.0f };
-		m_cameraTransform.r[3] = DirectX::XMVectorAdd(m_cameraTransform.r[3], DirectX::XMVectorMultiply(DirectX::XMLoadFloat4(&vec), m_cameraTransform.r[0]));
+		relCameraMovement.x += -movementUnit;
 	}
 	if (m_window.m_keyboard.KeyIsPressed(0x53)) // S
 	{
-		DirectX::XMFLOAT4 vec = { 0.0f, 0.0f, 1.0f, 0.0f };
-		m_cameraTransform.r[3] = DirectX::XMVectorAdd(m_cameraTransform.r[3], DirectX::XMVectorMultiply(DirectX::XMLoadFloat4(&vec), m_cameraTransform.r[2]));
+		relCameraMovement.z += -movementUnit;
 	}
 	if (m_window.m_keyboard.KeyIsPressed(0x44)) // D
 	{
-		DirectX::XMFLOAT4 vec = { -1.0f, 0.0f, 0.0f, 0.0f };
-		m_cameraTransform.r[3] = DirectX::XMVectorAdd(m_cameraTransform.r[3], DirectX::XMVectorMultiply(DirectX::XMLoadFloat4(&vec), m_cameraTransform.r[0]));
+		relCameraMovement.x += movementUnit;
 	}
 	if (m_window.m_keyboard.KeyIsPressed(0x51)) // Q
 	{
@@ -58,54 +56,58 @@ void Application::DoFrame()
 	}// more here: https://gamedev.stackexchange.com/questions/90208/how-to-calculate-a-direction-vector-for-camera
 	if (m_window.m_keyboard.KeyIsPressed(0x20)) // SPACE
 	{
-		DirectX::XMFLOAT4 vec = { 0.0f, -1.0f, 0.0f, 0.0f };
-		m_cameraTransform.r[3] = DirectX::XMVectorAdd(m_cameraTransform.r[3], DirectX::XMVectorMultiply(DirectX::XMLoadFloat4(&vec), m_cameraTransform.r[1]));
-
+		relCameraMovement.y += movementUnit;
 	}
 	if (m_window.m_keyboard.KeyIsPressed(0x11)) // CTRL
 	{
-		DirectX::XMFLOAT4 vec = { 0.0f, 1.0f, 0.0f, 0.0f };
-		m_cameraTransform.r[3] = DirectX::XMVectorAdd(m_cameraTransform.r[3], DirectX::XMVectorMultiply(DirectX::XMLoadFloat4(&vec), m_cameraTransform.r[1])); 
+		relCameraMovement.y += -movementUnit;
 	}
-
+	if (m_window.m_keyboard.KeyIsPressed(VK_LEFT))
+	{
+		m_cameraTransform *= DirectX::XMMatrixRotationY(DirectX::XMConvertToRadians( 1.0f));
+	}
+	if (m_window.m_keyboard.KeyIsPressed(VK_RIGHT))
+	{
+		m_cameraTransform *= DirectX::XMMatrixRotationY(DirectX::XMConvertToRadians(-1.0f));
+	}
+	if (m_window.m_keyboard.KeyIsPressed(VK_UP))
+	{
+		m_cameraTransform *= DirectX::XMMatrixRotationX(DirectX::XMConvertToRadians(1.0f));
+	}
+	if (m_window.m_keyboard.KeyIsPressed(VK_DOWN))
+	{
+		m_cameraTransform *= DirectX::XMMatrixRotationX(DirectX::XMConvertToRadians(-1.0f));
+	}
+	m_cameraTransform = m_cameraTransform * DirectX::XMMatrixTranslation(-relCameraMovement.x, -relCameraMovement.y, -relCameraMovement.z);
+	
 	auto mouseEvent = m_window.m_mouse.Read();
 	if (mouseEvent.has_value())
 	{
 		std::ostringstream ss;
+		/*
 		switch (mouseEvent->GetType())
 		{		
-		case Mouse::Event::Type::ScrollUp:
-		{
-			
-			DirectX::XMFLOAT4 vec = { 1.0f, 0.0f, 0.0f, 0.0f };
-			m_cameraTransform.r[3] = DirectX::XMVectorAdd(m_cameraTransform.r[3], DirectX::XMVectorMultiply(DirectX::XMLoadFloat4(&vec), DirectX::XMMatrixTranspose(m_cameraTransform).r[0]));
-			break;
-		}
-		case Mouse::Event::Type::ScrollDown:
-		{
-			DirectX::XMFLOAT4 vec = { -1.0f, 0.0f, 0.0f, 0.0f };
-			m_cameraTransform.r[3] = DirectX::XMVectorAdd(m_cameraTransform.r[3], DirectX::XMVectorMultiply(DirectX::XMLoadFloat4(&vec), DirectX::XMMatrixTranspose(m_cameraTransform).r[0]));
-			break;
-		}
+		case Mouse::Event::Type::ScrollUp:	
+		case Mouse::Event::Type::ScrollDown:	
 		case Mouse::Event::Type::MMClickPress:
 		case Mouse::Event::Type::LPress:
 		case Mouse::Event::Type::RPress:
 		case Mouse::Event::Type::MMClickRelease:
 		case Mouse::Event::Type::LRelease:
 		case Mouse::Event::Type::RRelease:
-			ss << "Left:" << mouseEvent->IsLeftPressed() << " Middle:" << mouseEvent->IsMMClickPressed() << " Right:" << mouseEvent->IsRightPressed()  << std::endl;
-			break;
+			
 		}
+		*/
 		OutputDebugString(ss.str().c_str());
 	}	
 
 
 
 	std::ostringstream ss;
-	ss << m_window.m_mouse.GetPosX() << " " << m_window.m_mouse.GetPosY();
+	ss <<"X: "<<DirectX::XMVectorGetX(m_cameraTransform.r[3])  << " Y:" << DirectX::XMVectorGetY(m_cameraTransform.r[3])<< " Z:" << DirectX::XMVectorGetZ(m_cameraTransform.r[3]);
 	float x = m_window.m_mouse.GetPosX() / ((float)m_window.m_width / 2.0f) - 1.0f;
 	float y = -m_window.m_mouse.GetPosY() / ((float)m_window.m_height / 2.0f) + 1.0f;
-	ss << " " << x << " " << y;
+	//ss << " " << x << " " << y;
 	m_window.ChangeTitle(ss.str().c_str());
 
 	
@@ -113,7 +115,7 @@ void Application::DoFrame()
 	
 	// Draw things
 	m_window.GetGfx().DrawTestTriangle(m_timer.Peak()*5,x,y, m_cameraTransform);
-	m_window.GetGfx().DrawTestTriangle(0, 0, 0, m_cameraTransform);
+	m_window.GetGfx().DrawTestTriangle(0.2, 0.2, 0.2, m_cameraTransform);
 
 	m_window.GetGfx().EndFrame(); // Calls present.
 }
