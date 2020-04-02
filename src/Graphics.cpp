@@ -39,7 +39,7 @@ namespace DX = DirectX;
 
 	UINT debugLayerEnum = 0u;
 #ifndef FINAL
-	debugLayerEnum = D3D11_CREATE_DEVICE_DEBUG;
+	debugLayerEnum |= D3D11_CREATE_DEVICE_DEBUG;
 #endif
 
 	GFX_THROW_FAILED(D3D11CreateDeviceAndSwapChain(

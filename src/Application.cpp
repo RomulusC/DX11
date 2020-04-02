@@ -53,8 +53,8 @@ void Application::DoFrame()
 	}
 	if (m_window.m_keyboard.KeyIsPressed(0x45)) // E
 	{
-		m_cameraTransform *= DirectX::XMMatrixRotationZ(DirectX::XMConvertToRadians(1.0f)); /*need cross product of x and z to get up vector*/
-	}// more here: https://gamedev.stackexchange.com/questions/90208/how-to-calculate-a-direction-vector-for-camera
+		m_cameraTransform *= DirectX::XMMatrixRotationZ(DirectX::XMConvertToRadians(1.0f));
+	}
 	if (m_window.m_keyboard.KeyIsPressed(0x20)) // SPACE
 	{
 		relCameraMovement.y += movementUnit;
@@ -79,6 +79,10 @@ void Application::DoFrame()
 	{
 		m_cameraTransform *= DirectX::XMMatrixRotationX(DirectX::XMConvertToRadians(-1.0f));
 	}
+	 if (m_window.m_keyboard.KeyIsPressed(VK_ESCAPE))
+	 {
+		 PostQuitMessage(0);
+     }
 	
 	m_cameraTransform *=  DirectX::XMMatrixTranslation(-relCameraMovement.x, -relCameraMovement.y, -relCameraMovement.z);
 	
@@ -124,7 +128,6 @@ void Application::DoFrame()
 	ss << std::fixed <<std::setprecision(2)<<"World_Pos: "<<"X: "<< worldPos.x << " Y:" << worldPos.y << " Z:" << worldPos.z;
 	float x = m_window.m_mouse.GetPosX() / ((float)m_window.m_width / 2.0f) - 1.0f;
 	float y = -m_window.m_mouse.GetPosY() / ((float)m_window.m_height / 2.0f) + 1.0f;
-	//ss << " " << x << " " << y;
 	m_window.ChangeTitle(ss.str().c_str());
 
 	
