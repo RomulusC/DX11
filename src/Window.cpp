@@ -121,7 +121,7 @@ LRESULT WINAPI Window::HandleMsg(HWND hWnd, UINT uMsg, WPARAM wParam, LPARAM lPa
 	switch (uMsg)
 	{
 
-	case WM_DESTROY:
+	case WM_CLOSE:
 	{
 		PostQuitMessage(0);
 		return 0;

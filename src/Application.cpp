@@ -81,7 +81,7 @@ void Application::DoFrame()
 	}
 	if (m_window.m_keyboard.KeyIsPressed(VK_ESCAPE))
 	{
-		 //PostQuitMessage(0);
+		 PostQuitMessage(0);
     }
 	
 	m_cameraTransform *=  DirectX::XMMatrixTranslation(-relCameraMovement.x, -relCameraMovement.y, -relCameraMovement.z);
