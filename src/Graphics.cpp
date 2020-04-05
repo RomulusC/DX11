@@ -1,15 +1,13 @@
 #include "Graphics.h"
 #include "ExceptionBaseImpl.h"
 #include "Core.h"
-#include <d3dcompiler.h>
-#include <sstream>
-#include <DirectXMath.h>
+#include "GraphicsThrowMacros.h"
 
+#include <d3dcompiler.h>
+#include <DirectXMath.h>
+#include <sstream>
 
 namespace DX = DirectX;
-
-#define GFX_THROW_FAILED(_hr) if( FAILED(_hr)){ auto ex = Graphics::HrException(__LINE__, __FILE__, _hr); OutputDebugString(ex.what()); DEBUG_BREAK(); throw ex;}
-#define GFX_DEVICE_REMOVED_EXCEPT(_hr)  auto ex = Graphics::DeviceRemovedException(__LINE__, __FILE__, _hr); OutputDebugString(ex.what()); DEBUG_BREAK(); throw ex
 
 	Graphics::Graphics(HWND _hWnd, unsigned int _ResWidth, unsigned int _ResHeight)
 	: m_pDevice(nullptr)

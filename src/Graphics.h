@@ -38,9 +38,10 @@ public:
 	void EndFrame();
 	float m_fov;
 	unsigned int m_xRes, m_yRes;
-private:
+public:
 	Microsoft::WRL::ComPtr<ID3D11Device> m_pDevice; // Allocating things (creates)
 	Microsoft::WRL::ComPtr<ID3D11DeviceContext> m_pDeviceCtx; // Config pipeline, issuing commands 
+private:
 	Microsoft::WRL::ComPtr<IDXGISwapChain> m_pSwapChain;
 	Microsoft::WRL::ComPtr<ID3D11RenderTargetView> m_pRTV;
 	Microsoft::WRL::ComPtr<ID3D11DepthStencilView> m_pDSV;
