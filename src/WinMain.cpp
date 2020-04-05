@@ -23,6 +23,7 @@ int CALLBACK WinMain(
 		}
 
 		Application app(xRes, yRes, "DX_3D11");
+		//throw std::exception();
 		return app.Go();		
 	}
 	catch(const ExceptionBaseImpl& e)

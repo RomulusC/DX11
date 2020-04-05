@@ -79,10 +79,10 @@ void Application::DoFrame()
 	{
 		m_cameraTransform *= DirectX::XMMatrixRotationX(DirectX::XMConvertToRadians(-1.0f));
 	}
-	 if (m_window.m_keyboard.KeyIsPressed(VK_ESCAPE))
-	 {
-		 PostQuitMessage(0);
-     }
+	if (m_window.m_keyboard.KeyIsPressed(VK_ESCAPE))
+	{
+		 //PostQuitMessage(0);
+    }
 	
 	m_cameraTransform *=  DirectX::XMMatrixTranslation(-relCameraMovement.x, -relCameraMovement.y, -relCameraMovement.z);
 	
