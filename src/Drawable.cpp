@@ -1,7 +1,6 @@
 #include "Drawable.h"
 #include "GraphicsThrowMacros.h"
 #include "IndexBuffer.h"
-
 #include <cassert>
 #include <typeinfo>
 
@@ -11,12 +10,12 @@ void Drawable::Draw(Graphics& _gfx) const
 	{
 		b->Bind(_gfx);
 	}
-	//_gfx.DrawIndexed(m_pIndexBuffer->GetCount());
+	_gfx.DrawIndexed(m_pIndexBuffer->GetCount());
 }
 
 void Drawable::AddBind(std::unique_ptr<Bindable> _bind)
 {
-	assert("*Must use AddIndexBuffer to bind index buffer" && typeId(*_bind) != typeid(m_pIndexBuffer));
+	assert("*Must* use AddIndexBuffer to bind index buffer" && typeid(*_bind) != typeid(IndexBuffer));
 	m_binds.push_back(std::move(_bind));
 }
 

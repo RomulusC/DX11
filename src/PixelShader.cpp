@@ -1,18 +1,15 @@
 #include "PixelShader.h"
 #include "GraphicsThrowMacros.h"
-#include <d3dcompiler.h>
 
-
-PixelShader::PixelShader(Graphics& _gfx, const std::wstring& _path)
+PixelShader::PixelShader(Graphics& gfx, const std::wstring& path)
 {
+
 	Microsoft::WRL::ComPtr<ID3DBlob> pBlob;
-
-	GFX_THROW_FAILED(D3DReadFileToBlob(_path.data(), &pBlob));
-
-	GFX_THROW_FAILED(GetDevice(_gfx)->CreatePixelShader(pBlob->GetBufferPointer(),
-		pBlob->GetBufferSize(), nullptr, &m_pPixelShader ));
+	GFX_THROW_FAILED(D3DReadFileToBlob(path.c_str(), &pBlob));
+	GFX_THROW_FAILED(GetDevice(gfx)->CreatePixelShader(pBlob->GetBufferPointer(), pBlob->GetBufferSize(), nullptr, &pPixelShader));
 }
-void PixelShader::Bind(Graphics& _gfx) noexcept
+
+void PixelShader::Bind(Graphics& gfx) noexcept
 {
-	GetContext(_gfx)->PSSetShader(m_pPixelShader.Get(), nullptr, 0u);
+	GetContext(gfx)->PSSetShader(pPixelShader.Get(), nullptr, 0u);
 }

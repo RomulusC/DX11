@@ -22,9 +22,9 @@ int CALLBACK WinMain(
 			yRes = std::stoi(resArgs->at(1));
 		}
 
-		Application app(xRes, yRes, "DX_3D11");
+		Application app_(xRes, yRes, "DXD11");
 		//throw std::exception();
-		return app.Go();		
+		return app_.Go();
 	}
 	catch(const ExceptionBaseImpl& e)
 	{

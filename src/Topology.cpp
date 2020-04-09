@@ -1,10 +1,11 @@
 #include "Topology.h"
 
-Topology::Topology(Graphics& _gfx, D3D11_PRIMITIVE_TOPOLOGY _type)
-	: m_type(_type)
+Topology::Topology(Graphics& gfx, D3D11_PRIMITIVE_TOPOLOGY type)
+	:
+	type(type)
 {}
 
-void Topology::Bind(Graphics& _gfx) noexcept
+void Topology::Bind(Graphics& gfx) noexcept
 {
-	GetContext(_gfx)->IASetPrimitiveTopology(m_type);
+	GetContext(gfx)->IASetPrimitiveTopology(type);
 }

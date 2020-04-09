@@ -267,7 +267,7 @@ std::optional<int> Window::ProcessMessage()
 	return std::optional<int>();
 }
 
-Graphics& Window::GetGfx()
+Graphics& Window::Gfx()
 {
 	if (!m_pGfx)
 	{

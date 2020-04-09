@@ -1,16 +1,20 @@
 #include "InputLayout.h"
 #include "GraphicsThrowMacros.h"
 
-InputLayout::InputLayout(Graphics& _gfx, const std::vector<D3D11_INPUT_ELEMENT_DESC>& _layout, ID3DBlob* _pShaderByteCode)
+InputLayout::InputLayout(Graphics& gfx,
+	const std::vector<D3D11_INPUT_ELEMENT_DESC>& layout,
+	ID3DBlob* pVertexShaderBytecode)
 {
-	GFX_THROW_FAILED(GetDevice(_gfx)->CreateInputLayout(
-		_layout.data(), (UINT)_layout.size(),
-		_pShaderByteCode->GetBufferPointer(),
-		_pShaderByteCode->GetBufferSize(),
-		&m_pInputLayout
+
+	GFX_THROW_FAILED(GetDevice(gfx)->CreateInputLayout(
+		layout.data(), (UINT)layout.size(),
+		pVertexShaderBytecode->GetBufferPointer(),
+		pVertexShaderBytecode->GetBufferSize(),
+		&pInputLayout
 	));
 }
-void InputLayout::Bind(Graphics& _gfx) noexcept
+
+void InputLayout::Bind(Graphics& gfx) noexcept
 {
-	GetContext(_gfx)->IASetInputLayout(m_pInputLayout.Get());
+	GetContext(gfx)->IASetInputLayout(pInputLayout.Get());
 }

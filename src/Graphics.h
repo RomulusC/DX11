@@ -1,8 +1,14 @@
 #pragma once
 #include <d3d11.h>
 #include "ExceptionBaseImpl.h"
+#include "FpsCamera.h"
+
 #include <wrl.h>
+#include <vector>
+#include <d3dcompiler.h>
 #include <DirectXMath.h>
+#include <memory>
+#include <random>
 
 class Graphics
 {
@@ -34,10 +40,15 @@ public:
 	Graphics& operator=(const Graphics&) = delete;
 
 	void ClearBuffer(float _red, float _green, float _blue) noexcept;
-	void DrawTestTriangle(float _angle, float _mXPos, float _mYPos, DirectX::XMMATRIX _cameraTransform);
+	void DrawIndexed(UINT count);	
 	void EndFrame();
+
 	float m_fov;
 	unsigned int m_xRes, m_yRes;
+	FpsCamera m_fpsCamera;
+private:
+	
+
 public:
 	Microsoft::WRL::ComPtr<ID3D11Device> m_pDevice; // Allocating things (creates)
 	Microsoft::WRL::ComPtr<ID3D11DeviceContext> m_pDeviceCtx; // Config pipeline, issuing commands 

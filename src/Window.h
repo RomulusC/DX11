@@ -61,7 +61,7 @@ private:
 public:
 	void ChangeTitle(const char* _str);
 	static std::optional<int> ProcessMessage();
-	Graphics& GetGfx();
+	Graphics& Gfx();
 public:
 	Keyboard m_keyboard;
 	Mouse m_mouse;

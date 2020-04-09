@@ -1,24 +1,25 @@
 #include "VertexShader.h"
 #include "GraphicsThrowMacros.h"
-#include <d3dcompiler.h>
 
-VertexShader::VertexShader(Graphics& _gfx, const std::wstring& _path)
+
+VertexShader::VertexShader(Graphics& gfx, const std::wstring& path)
 {
-	GFX_THROW_FAILED(D3DReadFileToBlob(_path.c_str(), &m_byteCodeBlob));
-	GFX_THROW_FAILED(GetDevice(_gfx)->CreateVertexShader(
-		m_byteCodeBlob->GetBufferPointer(),
-		m_byteCodeBlob->GetBufferSize(),
+
+	GFX_THROW_FAILED(D3DReadFileToBlob(path.c_str(), &pBytecodeBlob));
+	GFX_THROW_FAILED(GetDevice(gfx)->CreateVertexShader(
+		pBytecodeBlob->GetBufferPointer(),
+		pBytecodeBlob->GetBufferSize(),
 		nullptr,
-		&m_pVertexShader
+		&pVertexShader
 	));
 }
 
-void VertexShader::Bind(Graphics& _gfx) noexcept
+void VertexShader::Bind(Graphics& gfx) noexcept
 {
-	GetContext(_gfx)->VSSetShader(m_pVertexShader.Get(), nullptr, 0u);
+	GetContext(gfx)->VSSetShader(pVertexShader.Get(), nullptr, 0u);
 }
 
-ID3DBlob* VertexShader::GetByteCode() const noexcept
+ID3DBlob* VertexShader::GetBytecode() const noexcept
 {
-	return m_byteCodeBlob.Get();
+	return pBytecodeBlob.Get();
 }

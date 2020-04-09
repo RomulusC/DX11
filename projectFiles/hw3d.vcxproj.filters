@@ -25,6 +25,12 @@
     <Filter Include="Source Files\Bindables">
       <UniqueIdentifier>{3791758f-a55f-4859-9c89-a84b92b1fbd1}</UniqueIdentifier>
     </Filter>
+    <Filter Include="Header Files\Drawable">
+      <UniqueIdentifier>{9a46a817-c992-48f4-8657-0ae7a10897ec}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Source Files\Drawables">
+      <UniqueIdentifier>{02766e6c-c265-4b01-b1bb-a98bea6f2cc5}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="..\src\WinMain.cpp">
@@ -63,14 +69,23 @@
     <ClCompile Include="..\src\Topology.cpp">
       <Filter>Source Files\Bindables</Filter>
     </ClCompile>
-    <ClCompile Include="..\src\Drawable.cpp">
-      <Filter>Source Files\Bindables</Filter>
-    </ClCompile>
     <ClCompile Include="..\src\VertexBuffer.cpp">
       <Filter>Source Files\Bindables</Filter>
     </ClCompile>
     <ClCompile Include="..\src\VertexShader.cpp">
       <Filter>Source Files\Bindables</Filter>
+    </ClCompile>
+    <ClCompile Include="..\src\Drawable.cpp">
+      <Filter>Source Files\Drawables</Filter>
+    </ClCompile>
+    <ClCompile Include="..\src\TransformCbuf.cpp">
+      <Filter>Source Files\Bindables</Filter>
+    </ClCompile>
+    <ClCompile Include="..\src\Box.cpp">
+      <Filter>Source Files\Drawables</Filter>
+    </ClCompile>
+    <ClCompile Include="..\src\FpsCamera.cpp">
+      <Filter>Source Files</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
@@ -107,9 +122,6 @@
     <ClInclude Include="..\src\Timer.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="..\src\Camera.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
     <ClInclude Include="..\src\Bindable.h">
       <Filter>Header Files\Bindables</Filter>
     </ClInclude>
@@ -140,14 +152,20 @@
     <ClInclude Include="..\src\TransformCbuf.h">
       <Filter>Header Files\Bindables</Filter>
     </ClInclude>
-    <ClInclude Include="..\src\Drawable.h">
-      <Filter>Header Files\Bindables</Filter>
-    </ClInclude>
     <ClInclude Include="..\src\VertexBuffer.h">
       <Filter>Header Files\Bindables</Filter>
     </ClInclude>
     <ClInclude Include="..\src\VertexShader.h">
       <Filter>Header Files\Bindables</Filter>
+    </ClInclude>
+    <ClInclude Include="..\src\Drawable.h">
+      <Filter>Header Files\Drawable</Filter>
+    </ClInclude>
+    <ClInclude Include="..\src\Box.h">
+      <Filter>Header Files\Drawable</Filter>
+    </ClInclude>
+    <ClInclude Include="..\src\FpsCamera.h">
+      <Filter>Header Files</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>
