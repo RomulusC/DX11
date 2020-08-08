@@ -15,7 +15,7 @@ Application::Application(unsigned int _xRes, unsigned _yRes, const char* _name)
 	std::uniform_real_distribution<float> ddist(0.0f, 3.1415f * 2.0f);
 	std::uniform_real_distribution<float> odist(0.0f, 3.1415f * 0.3f);
 	std::uniform_real_distribution<float> rdist(6.0f, 20.0f);
-	for (auto i = 0; i < 80; i++)
+	for (auto i = 0; i < 1000; i++)
 	{
 		m_boxes.push_back(std::make_unique<Box>(
 			m_window.Gfx(), rng, adist,
@@ -45,25 +45,16 @@ Application::~Application()
 
 void Application::DoFrame()
 {
-	
-	DirectX::XMFLOAT4X4 temp;
-	DirectX::XMStoreFloat4x4(&temp, m_window.Gfx().m_fpsCamera.GetCameraMatXM());
-	DirectX::XMFLOAT4 worldPos = {};
-	worldPos.x += temp._11 * temp._41;
-	worldPos.y += temp._21 * temp._41;
-	worldPos.z += temp._31 * temp._41;
-
-	worldPos.x += temp._12 * temp._42;
-	worldPos.y += temp._22 * temp._42;
-	worldPos.z += temp._32 * temp._42;
-
-	worldPos.x += temp._13 * temp._43;
-	worldPos.y += temp._23 * temp._43;
-	worldPos.z += temp._33 * temp._43;
-
+	// Getting camera world space co-ordinates 
+	DirectX::XMMATRIX cameraMat = m_window.Gfx().m_fpsCamera.GetCameraMatXM();
+	DirectX::XMVECTOR transVec = cameraMat.r[3];
+	cameraMat = DirectX::XMMatrixTranspose(cameraMat);
+	transVec = DirectX::XMVector3Transform(transVec,cameraMat);
+	DirectX::XMFLOAT3 cameraPos;
+	DirectX::XMStoreFloat3(&cameraPos, transVec);	
 
 	std::ostringstream ss;
-	ss << std::fixed << std::setprecision(2) << "World_Pos: " << "X: " << worldPos.x << " Y:" << worldPos.y << " Z:" << worldPos.z;
+	ss << std::fixed << std::setprecision(2) << "World_Pos: " << "X: " << cameraPos.x << " Y:" << cameraPos.y << " Z:" << cameraPos.z;
 	m_window.ChangeTitle(ss.str().c_str());
 	
 	auto dt = m_timer.Mark();
