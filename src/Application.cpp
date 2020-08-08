@@ -45,14 +45,17 @@ Application::~Application()
 
 void Application::DoFrame()
 {
-	// Getting camera world space co-ordinates 
-	DirectX::XMMATRIX cameraMat = m_window.Gfx().m_fpsCamera.GetCameraMatXM();
-	DirectX::XMVECTOR transVec = cameraMat.r[3];
-	cameraMat = DirectX::XMMatrixTranspose(cameraMat);
-	transVec = DirectX::XMVector3Transform(transVec,cameraMat);
-	DirectX::XMFLOAT3 cameraPos;
-	DirectX::XMStoreFloat3(&cameraPos, transVec);	
+	// Getting camera world space co-ordinates using SIMD Vector Math
+	DirectX::XMMATRIX cameraMat = m_window.Gfx().m_fpsCamera.GetCameraMatXM(); // Get camera matrix
+	DirectX::XMVECTOR transVec = cameraMat.r[3];							   // Get camera matrix Translation vector
+	cameraMat = DirectX::XMMatrixTranspose(cameraMat);						   // Transpose to have access to rows (DX SIMD Matrix object only can access columns)
+	transVec = DirectX::XMVector3Transform(transVec,cameraMat);				   // Transform Camera Translation vector to the original Camera Matrix row components
+	transVec = DirectX::XMVectorNegate(transVec);							   // Negate, remember camera transformations are opposite of inputs. Move camera forward means push world space away from camera
+	
+	DirectX::XMFLOAT3 cameraPos;											   
+	DirectX::XMStoreFloat3(&cameraPos, transVec);							   // Bring data from SIMD to regular object
 
+	// Print camera world position to application name
 	std::ostringstream ss;
 	ss << std::fixed << std::setprecision(2) << "World_Pos: " << "X: " << cameraPos.x << " Y:" << cameraPos.y << " Z:" << cameraPos.z;
 	m_window.ChangeTitle(ss.str().c_str());
